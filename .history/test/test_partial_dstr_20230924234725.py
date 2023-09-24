@@ -42,11 +42,6 @@ class PartialDynamicStringTest (unittest.TestCase) :
         
         self.assertIsInstance(pdstring, pdstr)
         
-    def test_pdstr_init_works_for_whitespace_str (self) :
-        pdstring = pdstr("  \n  ")
-        
-        self.assertIsInstance(pdstring, pdstr)
-        
     def test_pdstr_saves_input_string_in_raw_prop_if_inits (self):
         string = "<HEAD>content</HEAD><START>content<END>"
         pdstring = pdstr(string)

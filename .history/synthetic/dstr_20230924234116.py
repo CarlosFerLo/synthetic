@@ -9,10 +9,7 @@ from .utils.dstr_to_dict import get_head_and_body
 class DynamicString ():
     raw: str
     
-    def __init__ (self, 
-                  string: Optional[str] = None, 
-                  pdstring: Optional[PartialDynamicString] = None
-    ) -> None :
+    def __init__ (self, string: Optional[str] = None, pdstring: Optional[PartialDynamicString] = None) -> None :
         if string and pdstring : raise ValueError("Can not initiate a dstr from both a string and a pdstr.")
         if not string and not pdstring : raise ValueError("Need to provide a string or pdstr to init a dstr.")
         

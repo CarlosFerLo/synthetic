@@ -27,7 +27,7 @@ class PartialDynamicString () :
         
     def complete (self) -> bool :
         ends_with_end_tag = re.compile(r"<END>(\s*)$")
-        return ends_with_end_tag.search(self.raw) 
+        return ends_with_end_tag.search(self.raw) :
             
         
     def _validate_str(self, string: str) -> bool :

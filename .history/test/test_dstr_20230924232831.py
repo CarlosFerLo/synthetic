@@ -36,14 +36,8 @@ class DynamicStringTest (unittest.TestCase):
         self.assertEqual(dict.head.content, "head content")
         self.assertEqual(dict.body.content, "body content")
     
-    def test_init_of_dstr_by_passing_pdstr (self) :
+    def test_cls_method_from_pdstr_to_convert_complete_pdstr_to_dstr (self) :
         pdstring = pdstr("<HEAD>head content</HEAD><START>body content<END>")
-        dstring = dstr(pdstring=pdstring)
+        dstring = dstr.from_pdstr(pdstring)
         
-        self.assertIsInstance(dstring, dstr)
-        
-    def test_init_fails_if_passing_no_string_or_pdstr (self) :
-        self.assertRaises(ValueError, dstr)
-        
-    def test_init_fails_if_passing_both_string_and_pdstr (self) :
-        self.assertRaises(ValueError, dstr, "string", pdstr(""))
+        self.assertIsInstance(dstring)

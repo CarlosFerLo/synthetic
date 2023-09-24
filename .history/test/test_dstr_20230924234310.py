@@ -44,6 +44,3 @@ class DynamicStringTest (unittest.TestCase):
         
     def test_init_fails_if_passing_no_string_or_pdstr (self) :
         self.assertRaises(ValueError, dstr)
-        
-    def test_init_fails_if_passing_both_string_and_pdstr (self) :
-        self.assertRaises(ValueError, dstr, "string", pdstr(""))
