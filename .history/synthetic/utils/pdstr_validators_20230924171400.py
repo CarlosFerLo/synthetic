@@ -20,7 +20,7 @@ def str_has_no_nonwhite_characters_between_head_and_body (string: str) -> bool :
     
     match = ends_head_and_non_whitespace.search(string)
     
-    if match and re.find(r"\\S", match.group()):
+    if match and re.find(r"\S", match.group()):
         return False"""
     
     return True

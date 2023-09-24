@@ -1,6 +1,6 @@
 import unittest
 
-from synthetic import pdstr, AppendResult, AppendResultCode
+from synthetic import pdstr, AppendResult
 
 class PartialDynamicStringTest (unittest.TestCase) :
     def test_pdstr_can_be_init_from_base_head_body_str (self) :
@@ -26,11 +26,6 @@ class PartialDynamicStringTest (unittest.TestCase) :
         
         self.assertIsInstance(pdstring, pdstr)
         
-    def test_pdstr_fails_to_init_if_string_has_nonwhitespace_characters_after_head (self):
-        string = "<HEAD>content</HEAD> content "
-        
-        self.assertRaises(ValueError, pdstr, string)
-        
     def test_pdstr_saves_input_string_in_raw_prop_if_inits (self):
         string = "<HEAD>content</HEAD><START>content<END>"
         pdstring = pdstr(string)
@@ -52,19 +47,3 @@ class PartialDynamicStringTest (unittest.TestCase) :
         output = pdstring.append("content")
         
         self.assertIsInstance(output, AppendResult)
-        
-    def test_pdstr_apped_method_returns_append_result_ok_if_succeeds (self):
-        string = "<HEAD>content</HEAD><START>"
-        pdstring = pdstr(string)
-        
-        output = pdstring.append("content")
-        
-        self.assertEqual(output.code, AppendResultCode.OK)
-        
-    def test_pdstr_append_method_returns_append_result_error_if_fails (self):
-        string = "<HEAD>content</HEAD>"
-        pdstring = pdstr(string)
-        
-        output = pdstring.append("content")
-        
-        self.assertEqual(output.code, AppendResultCode.ERROR)

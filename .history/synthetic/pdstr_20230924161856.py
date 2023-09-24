@@ -12,8 +12,7 @@ class PartialDynamicString () :
         
     def append(self, string: str) -> AppendResult :
         
-        if not self._validate_str(self.raw + string) :
-            return AppendResult(code=AppendResultCode.ERROR)
+        
         
         self.raw += string
         

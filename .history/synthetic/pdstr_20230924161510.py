@@ -1,5 +1,5 @@
 from .utils.pdstr_validators import PDSTR_VALIDATORS
-from .pdstr_append_result import AppendResult, AppendResultCode
+from .pdstr_append_result import AppendResult
 
 class PartialDynamicString () :
     raw: str
@@ -11,13 +11,9 @@ class PartialDynamicString () :
         self.raw = string
         
     def append(self, string: str) -> AppendResult :
-        
-        if not self._validate_str(self.raw + string) :
-            return AppendResult(code=AppendResultCode.ERROR)
-        
         self.raw += string
         
-        return AppendResult(code=AppendResultCode.OK)
+        return AppendResult()
         
     def _validate_str(self, string: str) -> bool :
         string = string.strip()

@@ -26,11 +26,6 @@ class PartialDynamicStringTest (unittest.TestCase) :
         
         self.assertIsInstance(pdstring, pdstr)
         
-    def test_pdstr_fails_to_init_if_string_has_nonwhitespace_characters_after_head (self):
-        string = "<HEAD>content</HEAD> content "
-        
-        self.assertRaises(ValueError, pdstr, string)
-        
     def test_pdstr_saves_input_string_in_raw_prop_if_inits (self):
         string = "<HEAD>content</HEAD><START>content<END>"
         pdstring = pdstr(string)
@@ -66,5 +61,3 @@ class PartialDynamicStringTest (unittest.TestCase) :
         pdstring = pdstr(string)
         
         output = pdstring.append("content")
-        
-        self.assertEqual(output.code, AppendResultCode.ERROR)

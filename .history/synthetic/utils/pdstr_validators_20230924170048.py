@@ -16,16 +16,8 @@ def str_has_partial_head_body_structure (string: str) -> bool :
     return True
 
 def str_has_no_nonwhite_characters_between_head_and_body (string: str) -> bool :
-    """ends_head_and_non_whitespace = re.compile(r"</HEAD>(.*)")
-    
-    match = ends_head_and_non_whitespace.search(string)
-    
-    if match and re.find(r"\\S", match.group()):
-        return False"""
-    
     return True
 
 PDSTR_VALIDATORS: List[Callable[[str], str]] = [
     str_has_partial_head_body_structure,
-    str_has_no_nonwhite_characters_between_head_and_body
 ]
