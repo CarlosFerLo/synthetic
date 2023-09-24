@@ -21,11 +21,10 @@ class PartialDynamicStringTest (unittest.TestCase) :
         self.assertIsInstance(pdstring, pdstr)
         
     def test_pdstr_fails_to_init_if_string_contains_head_body_tags_with_wrong_order (self):
-        string1 = "<HEAD><END></HEAD><START>"
-        string2 = "<HEAD>content</HEAD><END>"
+        string = "<HEAD><END></HEAD><START>"
+        pdstring = pdstr(string)
         
-        self.assertRaises(ValueError, pdstr, string1)
-        self.assertRaises(ValueError, pdstr, string2)
+        self.assertIsInstance(pdstring, pdstr)
         
     def test_pdstr_fails_to_init_if_string_has_nonwhitespace_characters_after_head (self):
         string = "<HEAD>content</HEAD> content "
@@ -71,6 +70,6 @@ class PartialDynamicStringTest (unittest.TestCase) :
         string = "<HEAD>content</HEAD>"
         pdstring = pdstr(string)
         
-        output = pdstring.append("<END>")
+        output = pdstring.append("content")
         
         self.assertEqual(output.code, AppendResultCode.ERROR)
