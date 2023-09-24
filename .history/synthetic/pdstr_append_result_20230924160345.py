@@ -1,2 +1,0 @@
-class AppendResult () :
-    pass

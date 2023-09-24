@@ -1,2 +1,0 @@
-class PartialDynamicString () :
-    raw: str
