@@ -1,6 +1,6 @@
 import unittest
 
-from synthetic import pdstr, AppendResult, AppendResultCode
+from synthetic import pdstr, AppendResult, AppendResultCode, DynamicState, Location
 
 class PartialDynamicStringTest (unittest.TestCase) :
     def test_pdstr_can_be_init_from_base_head_body_str (self) :
@@ -84,5 +84,64 @@ class PartialDynamicStringTest (unittest.TestCase) :
         output = pdstring.append("<END>")
         
         self.assertEqual(output.code, AppendResultCode.ERROR)
+        
+    def test_pdstr_allows_no_function_calls_in_head (self):
+        string1 = "<HEAD>[function(text)->response]"
+        string2 = "<HEAD>[function(text)->resopnse]</HEAD>"
+        
+        self.assertRaises(ValueError, pdstr, string1)
+        self.assertRaises(ValueError, pdstr, string2)
+        
+    def test_pdstr_allows_no_partial_function_calls_in_head (self) :
+        string = "<HEAD>[function(text)"
+        
+        self.assertRaises(ValueError, pdstr, string)
+        
+    def test_pdstr_computes_state_when_init (self) :
+        pdstring = pdstr("<HEAD> content")
+        
+        self.assertIsInstance(pdstring._state, DynamicState)
+        
+    def test_pdstr_computes_state_location_correcly (self):
+        start = pdstr("")._state.location
+        head = pdstr("<HEAD> ")._state.location
+        middle = pdstr("<HEAD></HEAD>")._state.location
+        body = pdstr("<HEAD>content</HEAD><START>content ")._state.location
+        end = pdstr("<HEAD>content</HEAD><START>content<END>")._state.location
+        
+        self.assertEqual(start, Location.START)
+        self.assertEqual(head, Location.HEAD)
+        self.assertEqual(middle, Location.MIDDLE)
+        self.assertEqual(body, Location.BODY)
+        self.assertEqual(end, Location.END)
+        
+    def test_pdstr_is_head_method_returns_true_if_is_in_head_and_false_otherwhise (self):
+        pdstring1 = pdstr("<HEAD> content")
+        pdstring2 = pdstr("<HEAD></HEAD>")
+        
+        self.assertTrue(pdstring1.is_head())
+        self.assertFalse(pdstring2.is_head())
+        
+    def test_pdstr_is_body_method_returns_true_if_is_in_body_and_false_otherwhise (self):
+        pdstring1 = pdstr("<HEAD></HEAD><START>")
+        pdstring2 = pdstr("<HEAD>")
+        
+        self.assertTrue(pdstring1.is_body())
+        self.assertFalse(pdstring2.is_body())
+    
+    def test_pdstr_stop_sequences_method_returns_list_of_str (self) :
+        pdstring = pdstr("<HEAD>Hello")
+        
+        stop = pdstring.stop_sequences()
+        self.assertIsInstance(stop, list)
+        if len(stop) > 0 : 
+            self.assertIsInstance(stop[0], str)
+            
+    def test_dstr_stop_sequences_method_returns_desired_sequences_if_in_head (self) :
+        sequences = ["</HEAD>"]
+        pdstring = pdstr("<HEAD>content")
+        
+        self.assertTrue(pdstring.is_head())
+        self.assertListEqual(pdstring.stop_sequences(), sequences)
         
     

@@ -18,6 +18,10 @@ class DynamicStringTest (unittest.TestCase):
         string = "<HEAD></HEAD>text<START><END>"
         self.assertRaises(ValueError, dstr, string)
         
+    def test_dstr_fails_to_init_if_string_has_function_calls_in_head (self) :
+        string = "<HEAD>[function(text)->result]</HEAD><START><END>"
+        self.assertRaises(ValueError, dstr, string)
+        
     def test_dstr_as_dict_returns_dstr_dict (self) :
         dstring = dstr("<HEAD></HEAD><START><END>") 
         self.assertIsInstance(dstring.as_dict(), DynamicStringDict)
@@ -47,3 +51,5 @@ class DynamicStringTest (unittest.TestCase):
         
     def test_init_fails_if_passing_both_string_and_pdstr (self) :
         self.assertRaises(ValueError, dstr, "string", pdstr(""))
+        
+    
