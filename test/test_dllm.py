@@ -52,3 +52,13 @@ class DynamicLLMTest(unittest.TestCase) :
         dllm = DynamicLLM(llm=llm, prefix="prefix")
         
         self.assertIsInstance(dllm, DynamicLLM)
+        
+    def test_dynamic_llm_appends_prompt_to_prefix_with_build_prompt_method (self) :
+        llm = FakeListLLM(responses=[""])
+        dllm = DynamicLLM(llm=llm, prefix="prefix")
+        
+        prompt = dllm.build_prompt("<HEAD>")
+        self.assertIsInstance(prompt, str)
+        self.assertEqual(prompt, "prefix<HEAD>")
+        
+    

@@ -129,6 +129,27 @@ class PartialDynamicStringTest (unittest.TestCase) :
         self.assertTrue(pdstring1.is_body())
         self.assertFalse(pdstring2.is_body())
     
+    def test_pdstr_is_start_method_returns_true_if_is_in_body_and_false_otherwhise (self):
+        pdstring1 = pdstr("  ")
+        pdstring2 = pdstr("<HEAD>")
+        
+        self.assertTrue(pdstring1.is_start())
+        self.assertFalse(pdstring2.is_start())
+        
+    def test_pdstr_is_middle_method_returns_true_if_is_in_body_and_false_otherwhise (self):
+        pdstring1 = pdstr("<HEAD></HEAD>  ")
+        pdstring2 = pdstr("<HEAD></HEAD>    <START><END>")
+        
+        self.assertTrue(pdstring1.is_middle())
+        self.assertFalse(pdstring2.is_middle())
+    
+    def test_pdstr_is_end_method_returns_true_if_is_in_body_and_false_otherwhise (self):
+        pdstring1 = pdstr("<HEAD></HEAD><START><END> ")
+        pdstring2 = pdstr("<HEAD>")
+        
+        self.assertTrue(pdstring1.is_end())
+        self.assertFalse(pdstring2.is_end())
+    
     def test_pdstr_stop_sequences_method_returns_list_of_str (self) :
         pdstring = pdstr("<HEAD>Hello")
         
@@ -140,8 +161,52 @@ class PartialDynamicStringTest (unittest.TestCase) :
     def test_dstr_stop_sequences_method_returns_desired_sequences_if_in_head (self) :
         sequences = ["</HEAD>"]
         pdstring = pdstr("<HEAD>content")
-        
-        self.assertTrue(pdstring.is_head())
+
         self.assertListEqual(pdstring.stop_sequences(), sequences)
         
-    
+    def test_dstr_stop_sequences_method_returns_desired_sequences_if_in_body (self) :
+        sequences = ["<END>"]
+        pdstring = pdstr("<HEAD></HEAD><START> ")
+        
+        self.assertListEqual(pdstring.stop_sequences(), sequences)
+        
+    def test_dstr_stop_sequences_method_returns_desired_sequences_if_in_start (self) :
+        sequences = ["<HEAD>"]
+        pdstring = pdstr(" ")
+        
+        self.assertListEqual(pdstring.stop_sequences(), sequences)
+        
+    def test_dstr_stop_sequences_method_returns_desired_sequences_if_in_middle (self) :
+        sequences = ["<START>"]
+        pdstring = pdstr("<HEAD></HEAD> ")
+        
+        self.assertListEqual(pdstring.stop_sequences(), sequences)
+        
+    def test_pdstr_stop_sequences_method_returns_desired_sequences_if_in_end (self) :
+        sequences = [""]
+        pdstring = pdstr("<HEAD></HEAD><START><END> ")
+        
+        self.assertListEqual(pdstring.stop_sequences(), sequences)
+        
+    def test_pdstr_apped_method_changes_location_correcly (self) :
+        pdstring1 = pdstr("  ")
+        pdstring2 = pdstr("  ")
+        string1 = "  "
+        string2 = "<HEAD> content"
+        string3 = "<HEAD></HEAD>"
+        string4 = "<START> content"
+        string5 = "content"
+        string6 = "<END>     "
+        
+        pdstring1.append(string1)
+        self.assertTrue(pdstring1.is_start())
+        pdstring1.append(string2)
+        self.assertTrue(pdstring1.is_head())
+        pdstring2.append(string3)
+        self.assertTrue(pdstring2.is_middle())
+        pdstring2.append(string4)
+        self.assertTrue(pdstring2.is_body())
+        pdstring2.append(string5)
+        self.assertTrue(pdstring2.is_body())
+        pdstring2.append(string6)
+        self.assertTrue(pdstring2.is_end())

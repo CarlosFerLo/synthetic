@@ -20,7 +20,7 @@ class DynamicLLM ():
         for _ in range(self.max_iter) :
             stop_sequences = pdstring.stop_sequences()
             output = self.llm(
-                prompt=self.prefix + pdstring.raw,
+                prompt=self.build_prompt(pdstring.raw),
                 stop=stop_sequences
             )
             
@@ -33,3 +33,6 @@ class DynamicLLM ():
                 return dstr(pdstring=pdstring)
             
         raise GenerationError("max_iteration limit was reached")
+    
+    def build_prompt (self, prompt: str) -> str :
+        return self.prefix + prompt
