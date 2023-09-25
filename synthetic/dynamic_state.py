@@ -9,9 +9,12 @@ body_start = re.compile(r"<START>")
 body_end = re.compile(r"<END>")
 class DynamicState () :
     location: Location
+    is_function_calling: bool
     
     def __init__(self, string: str) -> None:
         self._set_location(string)
+        self._set_is_function_calling(string)
+        
         
     def update (self, string: str) -> None:
         if body_end.search(string) :
@@ -22,6 +25,8 @@ class DynamicState () :
             self.location = Location.MIDDLE
         elif head_start.search(string) :
             self.location = Location.HEAD
+        
+        self._set_is_function_calling(string)
         
         
     def _set_location(self, string:str) -> None:
@@ -36,3 +41,8 @@ class DynamicState () :
         else :
             self.location = Location.END
         
+    def _set_is_function_calling(self, string:str) -> None :
+        if self.location == Location.BODY :
+            self.is_function_calling = string.endswith(")->")
+        else :
+            self.is_function_calling = False

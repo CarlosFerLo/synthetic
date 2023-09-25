@@ -165,7 +165,7 @@ class PartialDynamicStringTest (unittest.TestCase) :
         self.assertListEqual(pdstring.stop_sequences(), sequences)
         
     def test_dstr_stop_sequences_method_returns_desired_sequences_if_in_body (self) :
-        sequences = ["<END>"]
+        sequences = ["<END>", ")->"]
         pdstring = pdstr("<HEAD></HEAD><START> ")
         
         self.assertListEqual(pdstring.stop_sequences(), sequences)
@@ -217,3 +217,12 @@ class PartialDynamicStringTest (unittest.TestCase) :
         
         result = pdstring.append(string)
         self.assertIsInstance(result.state, DynamicState)
+        
+    def test_pdstr_state_identifies_when_a_function_call_is_made (self) :
+        pdstring1 = pdstr("<HEAD></HEAD><START>[function(input)->")
+        pdstring2 = pdstr("<HEAD></HEAD><START>content->")
+        
+        self.assertTrue(pdstring1.is_fcalling())
+        self.assertFalse(pdstring2.is_fcalling())
+        
+        

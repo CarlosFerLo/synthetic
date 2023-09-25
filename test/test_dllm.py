@@ -76,3 +76,5 @@ class DynamicLLMTest(unittest.TestCase) :
         # If no <HEAD> tag was appended this run would fail
         result = dllm(pdstr("<HEAD>content</HEAD>"))
         self.assertIsInstance(result, dstr)
+        
+    

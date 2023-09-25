@@ -54,7 +54,7 @@ class PartialDynamicString () :
         elif self.is_middle(): 
             stop_sequences += ["<START>"]
         elif self.is_body() :
-            stop_sequences += ["<END>"]
+            stop_sequences += ["<END>", ")->"]
         else :
             stop_sequences += [""]
             
@@ -79,6 +79,10 @@ class PartialDynamicString () :
     def is_body (self) -> bool :
         self._set_state()
         return self._state.location == Location.BODY
+    
+    def is_fcalling (self) -> bool :
+        self._set_state()
+        return self._state.is_function_calling
     
     def _validate_str(self, string: str) -> bool :
         string = string.strip()
