@@ -31,7 +31,10 @@ class PartialDynamicString () :
         self._update_state(string)
         self.raw += string
         
-        return AppendResult(code=AppendResultCode.OK)
+        return AppendResult(
+            code=AppendResultCode.OK,
+            state=self._state
+            )
         
     def complete (self) -> bool :
         if self._complete: return True

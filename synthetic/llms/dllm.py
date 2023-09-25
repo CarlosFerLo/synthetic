@@ -1,7 +1,7 @@
 from typing import Any
 from langchain.llms.base import LLM
 
-from synthetic import dstr, pdstr, AppendResultCode
+from synthetic import dstr, pdstr, AppendResultCode, DynamicState, Location
 
 from .generation_error import GenerationError
 
@@ -29,10 +29,15 @@ class DynamicLLM ():
             if result.code == AppendResultCode.ERROR :
                 raise GenerationError("ERROR code returned when appending generation to pdstr.")
             
+            if result.state.location == Location.START :
+                pdstring.append("<HEAD>")
+            elif result.state.location == Location.MIDDLE :
+                pdstring.append("<START>")
+            
             if pdstring.complete():
                 return dstr(pdstring=pdstring)
             
         raise GenerationError("max_iteration limit was reached")
     
-    def build_prompt (self, prompt: str) -> str :
+    def build_prompt (self, prompt: str) -> str :        
         return self.prefix + prompt

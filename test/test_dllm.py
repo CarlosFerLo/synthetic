@@ -39,7 +39,7 @@ class DynamicLLMTest(unittest.TestCase) :
         self.assertRaises(GenerationError, dllm, pdstring2)
         
     def test_dynamic_llm_can_handle_multiple_sequential_generation_calls_to_llm (self) :
-        llm = FakeListLLM(responses=["content</HEAD>", "<START>content<END>"])
+        llm = FakeListLLM(responses=["content</HEAD>", "content<END>"])
         dllm = DynamicLLM(llm)
         
         pdstring = pdstr("<HEAD>")
@@ -61,4 +61,18 @@ class DynamicLLMTest(unittest.TestCase) :
         self.assertIsInstance(prompt, str)
         self.assertEqual(prompt, "prefix<HEAD>")
         
-    
+    def test_dynamic_llm_appends_head_start_tag_to_pdstr_if_state_location_is_start_after_generation (self) :
+        llm = FakeListLLM(responses=["","content", "</HEAD><START><END>"])
+        dllm = DynamicLLM(llm=llm, prefix="prefix")
+        
+        # If no <HEAD> tag was appended this run would fail
+        result = dllm(pdstr("   "))
+        self.assertIsInstance(result, dstr)
+        
+    def test_dynamic_llm_appends_body_start_tag_to_pdstr_if_state_location_is_middle_after_generation (self) :
+        llm = FakeListLLM(responses=["","content", "<END>"])
+        dllm = DynamicLLM(llm=llm, prefix="prefix")
+        
+        # If no <HEAD> tag was appended this run would fail
+        result = dllm(pdstr("<HEAD>content</HEAD>"))
+        self.assertIsInstance(result, dstr)

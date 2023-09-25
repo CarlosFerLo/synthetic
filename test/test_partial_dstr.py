@@ -210,3 +210,10 @@ class PartialDynamicStringTest (unittest.TestCase) :
         self.assertTrue(pdstring2.is_body())
         pdstring2.append(string6)
         self.assertTrue(pdstring2.is_end())
+        
+    def test_pdstr_append_method_returns_new_state_inside_appending_result (self) :
+        pdstring = pdstr("<HEAD>")
+        string = "content</HEAD><START>"
+        
+        result = pdstring.append(string)
+        self.assertIsInstance(result.state, DynamicState)
