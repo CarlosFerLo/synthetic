@@ -1,5 +1,5 @@
 import re
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from .utils.pdstr_validators import PDSTR_VALIDATORS
 from .pdstr_append_result import AppendResult, AppendResultCode
@@ -59,6 +59,20 @@ class PartialDynamicString () :
             stop_sequences += [""]
             
         return stop_sequences
+    
+    def get_fcall (self) -> Tuple[str, str] :
+        if not self.is_fcalling():
+            raise ValueError("Can not extract function call if pdstr is not calling a function.")
+    
+        extract_function_call = re.compile(r"\[(.*)\((.*)\)->$", flags=re.M)
+        match = extract_function_call.search(self.raw)
+        
+        if not match :
+            raise RuntimeError("Regular expression did not match")
+        
+        return match.groups()
+        
+         
     
     def is_start (self) -> bool :
         self._set_state()

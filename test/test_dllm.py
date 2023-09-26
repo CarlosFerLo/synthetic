@@ -4,6 +4,7 @@ from langchain.llms import FakeListLLM
 
 from synthetic import pdstr, dstr, AppendResultCode
 from synthetic.llms import DynamicLLM, GenerationError
+from synthetic.functions import Function
 
 class DynamicLLMTest(unittest.TestCase) :
     def test_dynamic_llm_can_be_init_with_llm (self) :
@@ -77,4 +78,31 @@ class DynamicLLMTest(unittest.TestCase) :
         result = dllm(pdstr("<HEAD>content</HEAD>"))
         self.assertIsInstance(result, dstr)
         
-    
+    def test_dynamic_llm_init_accepts_list_of_functions_and_saves_it_in_functions (self) :
+        llm = FakeListLLM(responses=[""])
+        functions = [
+            Function(
+                name="function",
+                description="description",
+                call=lambda x: x
+            )
+        ]
+        
+        dllm = DynamicLLM(llm=llm, functions=functions)
+        
+        self.assertIsInstance(dllm, DynamicLLM)
+        self.assertListEqual(dllm.functions, functions)
+        
+    def test_dynamic_llm_calls_a_function_if_is_fcalling_returns_true_and_name_matches_and_appends_result (self):
+        llm = FakeListLLM(responses=["[function(Hello World)->","<END>"])
+        functions = [
+            Function(
+                name="function",
+                description="description",
+                call=lambda x: x
+            )
+        ]
+        dllm = DynamicLLM(llm=llm, functions=functions)
+        
+        dstring = dllm(pdstr("<HEAD></HEAD><START>"))
+        self.assertEqual(dstring.raw, "<HEAD></HEAD><START>[function(Hello World)->Hello World]<END>")

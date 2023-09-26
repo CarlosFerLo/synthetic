@@ -1,6 +1,7 @@
 import unittest
+from typing import List
 
-from synthetic import dstr, pdstr, DynamicStringDict
+from synthetic import dstr, pdstr, DynamicStringDict, FunctionCall
 
 
 class DynamicStringTest (unittest.TestCase):
@@ -52,4 +53,14 @@ class DynamicStringTest (unittest.TestCase):
     def test_init_fails_if_passing_both_string_and_pdstr (self) :
         self.assertRaises(ValueError, dstr, "string", pdstr(""))
         
-    
+    def test_dstr_as_dict_returns_function_calls_as_child_to_body (self) :
+        dstring = dstr("<HEAD></HEAD><START>content [function(input)->output] content<END>")
+        dstring_dict = dstring.as_dict()
+        
+        self.assertIsInstance(dstring_dict.body.children, List)
+        self.assertIsInstance(dstring_dict.body.children[0], FunctionCall)
+
+        self.assertEqual(dstring_dict.body.children[0].name, "function")
+        self.assertEqual(dstring_dict.body.children[0].input, "input")
+        self.assertEqual(dstring_dict.body.children[0].output, "output")
+        self.assertEqual(dstring_dict.body.children[0].id, "fcall-0")

@@ -225,4 +225,17 @@ class PartialDynamicStringTest (unittest.TestCase) :
         self.assertTrue(pdstring1.is_fcalling())
         self.assertFalse(pdstring2.is_fcalling())
         
+    def test_pdstr_get_fcall_method_returns_name_input_str_tuple_if_is_fcalling_is_true (self):
+        pdstring = pdstr("<HEAD></HEAD><START>[function(input)->")
         
+        name, input = pdstring.get_fcall()
+        
+        self.assertIsInstance(name, str)
+        self.assertIsInstance(input, str)
+        
+    def test_pdstr_get_fcall_method_fails_if_is_faclling_returns_false (self):
+        pdstring1 = pdstr("<HEAD></HEAD><START>not a function call")
+        pdstring2 = pdstr("<HEAD></HEAD><START>[function()->reuslt]")
+        
+        self.assertRaises(ValueError, pdstring1.get_fcall)
+        self.assertRaises(ValueError, pdstring2.get_fcall)
