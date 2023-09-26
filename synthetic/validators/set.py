@@ -10,12 +10,13 @@ class ValidatorSet ():
         
     def validate (self, string: str) -> Tuple[ValidationCode, str]:
         code = ValidationCode.OK
+        string = string.strip()
         for validator in self.validators :
             new_code, string = validator.validate(string)
             
             if new_code == ValidationCode.WARN :
                 code = new_code
             elif new_code == ValidationCode.FAIL :
-                return (ValidationCode.FAIL, string)
+                return (new_code, string)
             
         return (code, string)

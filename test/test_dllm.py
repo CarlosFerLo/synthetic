@@ -106,3 +106,31 @@ class DynamicLLMTest(unittest.TestCase) :
         
         dstring = dllm(pdstr("<HEAD></HEAD><START>"))
         self.assertEqual(dstring.raw, "<HEAD></HEAD><START>[function(Hello World)->Hello World]<END>")
+        
+    def test_dynamic_llm_adds_function_names_and_descriptions_to_prefix_if_describe_functions_is_true (self):
+        llm = FakeListLLM(responses=["[function(Hello World)->","<END>"])
+        functions = [
+            Function(
+                name="function",
+                description="description",
+                call=lambda x: x
+            )
+        ]
+        dllm = DynamicLLM(llm=llm, functions=functions, prefix="", describe_functions=True)
+        prompt = dllm.build_prompt("")
+        
+        self.assertEqual(prompt, "function: description")
+        
+    def test_dynamic_llm_does_not_add_function_description_if_specified_at_init (self) :
+        llm = FakeListLLM(responses=["[function(Hello World)->","<END>"])
+        functions = [
+            Function(
+                name="function",
+                description="description",
+                call=lambda x: x
+            )
+        ]
+        dllm = DynamicLLM(llm=llm, functions=functions, prefix="", describe_functions=False)
+        prompt = dllm.build_prompt("")
+        
+        self.assertEqual(prompt, "")

@@ -22,3 +22,14 @@ class FunctionTest (unittest.TestCase) :
         output = func("Hello ")
         self.assertIsInstance(output, str)
     
+    def test_function_describe_method_returns_correct_concadenation_of_name_and_description(self):
+        func = Function(
+            name="name",
+            description="description",
+            call=lambda x: x 
+        )
+        
+        description = func.describe()
+        
+        self.assertIsInstance(description, str)
+        self.assertEqual(description, "name: description")

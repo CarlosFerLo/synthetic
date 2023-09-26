@@ -12,3 +12,6 @@ class Function ():
         
     def __call__(self, string: str) -> str:
         return self.call(string)
+    
+    def describe (self) -> str:
+        return f"{self.name}: {self.description}"

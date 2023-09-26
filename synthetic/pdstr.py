@@ -1,38 +1,47 @@
 import re
 from typing import List, Optional, Tuple
+from warnings import warn
 
-from .utils.pdstr_validators import PDSTR_VALIDATORS
 from .pdstr_append_result import AppendResult, AppendResultCode
 from .dynamic_state import DynamicState, Location
-
+from .validators import ValidationCode, ValidatorSet
+from .validators.default import PDSTR_DEFAULT_VALIDATOR_SET
 class PartialDynamicString () :
     raw: str
+    validation_set: ValidatorSet
     
     _state: Optional[DynamicState] = None
     _complete: bool = False
     
-    def __init__(self, string: str) -> None :
-        if not self._validate_str(string) :
+    def __init__(self, string: str, validator_set: ValidatorSet = PDSTR_DEFAULT_VALIDATOR_SET) -> None :
+        code, string = validator_set.validate(string)
+        if code == ValidationCode.WARN :
+            warn(f"Validator had to update string.")
+        elif code == ValidationCode.FAIL :
             raise ValueError("The string must follow the desired format to pass validation.")
         
         self.raw = string
         self._set_state()
+        self.validation_set = validator_set
         
         
     def append(self, string: str) -> AppendResult :
         
         concatenated_string = self.raw + string
         
-        print(concatenated_string)
+        code, concatenated_string = self.validation_set.validate(concatenated_string)
         
-        if not self._validate_str(concatenated_string) :
+        if code == ValidationCode.FAIL :
             return AppendResult(code=AppendResultCode.ERROR)
+        
         
         self._update_state(string)
         self.raw += string
         
+        code = AppendResultCode.OK if code == ValidationCode.OK else AppendResult.WARN
+        
         return AppendResult(
-            code=AppendResultCode.OK,
+            code=code,
             state=self._state
             )
         
@@ -97,15 +106,6 @@ class PartialDynamicString () :
     def is_fcalling (self) -> bool :
         self._set_state()
         return self._state.is_function_calling
-    
-    def _validate_str(self, string: str) -> bool :
-        string = string.strip()
-        
-        for v in PDSTR_VALIDATORS :
-            if not v(string) :
-                return False
-        
-        return True
          
     def _set_state(self) -> None :
         if self._state is None :

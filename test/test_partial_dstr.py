@@ -27,15 +27,22 @@ class PartialDynamicStringTest (unittest.TestCase) :
         self.assertRaises(ValueError, pdstr, string1)
         self.assertRaises(ValueError, pdstr, string2)
         
-    def test_pdstr_fails_to_init_if_string_has_nonwhitespace_characters_after_head (self):
+    def test_pdstr_inits_with_eddited_string_if_string_has_nonwhitespace_characters_after_head (self):
         string = "<HEAD>content</HEAD> content "
         
-        self.assertRaises(ValueError, pdstr, string)
+        with self.assertWarns(Warning):
+            pdstring = pdstr(string)
+        
+        self.assertEqual(pdstring.raw, "<HEAD>content</HEAD><START>")
+        
         
     def test_pdstr_fails_to_init_if_string_has_nonwhitespace_characters_between_head_and_body (self):
-        string = "<HEAD>content</HEAD> content <START>"
+        string = "<HEAD>content</HEAD> content <START> content"
         
-        self.assertRaises(ValueError, pdstr, string)
+        with self.assertWarns(Warning):
+            pdstring = pdstr(string)
+        
+        self.assertEqual(pdstring.raw, "<HEAD>content</HEAD><START> content")
         
     def test_pdstr_init_works_for_empty_str (self) :
         pdstring = pdstr("")

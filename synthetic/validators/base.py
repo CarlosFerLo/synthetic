@@ -23,3 +23,4 @@ class Validator () :
         except :
             return (ValidationCode.FAIL, string)
         
+    

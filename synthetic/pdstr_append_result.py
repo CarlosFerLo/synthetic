@@ -3,7 +3,7 @@ from typing import Optional
 
 from .dynamic_state import DynamicState
 
-AppendResultCode = Enum("AppenResultCode", ["OK", "ERROR"])
+AppendResultCode = Enum("AppenResultCode", ["OK", "ERROR", "WARN"])
 
 class AppendResult () :
     code: AppendResultCode

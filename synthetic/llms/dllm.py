@@ -12,12 +12,20 @@ class DynamicLLM ():
     functions: List[Function]
     
     max_iter: int
+    describe_functions: bool
     
-    def __init__(self, llm: LLM, max_iter: int = 5, prefix: str = "", functions: List[Function] = []) -> None:
+    def __init__(self, 
+                 llm: LLM, 
+                 max_iter: int = 5, 
+                 prefix: str = "", 
+                 functions: List[Function] = [],
+                 describe_functions: bool = True
+    ) -> None:
         self.llm = llm
         self.max_iter = max_iter
         self.prefix = prefix
         self.functions = functions
+        self.describe_functions = describe_functions
         
     def __call__(self, pdstring: pdstr) -> dstr:
         for _ in range(self.max_iter) :
@@ -51,5 +59,6 @@ class DynamicLLM ():
             
         raise GenerationError("max_iteration limit was reached")
     
-    def build_prompt (self, prompt: str) -> str :        
-        return self.prefix + prompt
+    def build_prompt (self, prompt: str) -> str :
+        describe_functions = "\n".join(map(lambda x: x.describe(), self.functions)) if self.describe_functions else ""   
+        return self.prefix + describe_functions + prompt
