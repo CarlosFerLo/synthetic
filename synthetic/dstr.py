@@ -3,7 +3,7 @@ from typing import Optional
 from .pdstr import PartialDynamicString
 from .dstrdict import DynamicStringDict
 
-from .utils.dstr_to_dict import get_head_and_body
+from synthetic.utils.dstr_to_dict import get_head_and_body
 from .validators import ValidatorSet, ValidationCode
 from.validators.default import DSTR_DEFAULT_VALIDATOR_SET
 
