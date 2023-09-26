@@ -1,2 +1,2 @@
 # synthetic
-Synthetic Cognition general inference architecture for language model agents DEMO
+synthetic Cognition general inference architecture for language model agents DEMO
