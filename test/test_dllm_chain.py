@@ -74,3 +74,11 @@ class DynamicLLMChainTest (unittest.TestCase):
         with self.assertRaises(KeyError) :
             chain.run(input="input", output="output")
     
+    def test_dllm_chain_fails_to_run_if_format_does_not_validate (self):
+        prompt_template = PromptTemplate(input_variables=["input"], template="<HEAD>{input}</HEAD><START>")
+        llm = FakeListLLM(responses=["output<END>"])
+        dllm = DynamicLLM(llm=llm)
+        chain = DynamicLLMChain(dllm, prompt_template)
+        
+        with self.assertRaises(ValueError) :
+            chain.run(input="<END>")
