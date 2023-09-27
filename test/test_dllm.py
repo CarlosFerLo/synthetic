@@ -148,3 +148,9 @@ class DynamicLLMTest(unittest.TestCase) :
         
         prompt = dllm.build_prompt("prompt")
         self.assertEqual(prompt, "prefixfunction: descriptionsufixprompt")
+        
+    def test_dynamic_llm_accepts_verbose__in_init (self):
+        llm = FakeListLLM(responses=[""])
+        dllm = DynamicLLM(llm=llm, verbosity=True)
+        
+        self.assertIsInstance(dllm, DynamicLLM)

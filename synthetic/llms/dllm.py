@@ -20,7 +20,8 @@ class DynamicLLM ():
                  prefix: str = "",
                  sufix: str = "",
                  functions: List[Function] = [],
-                 describe_functions: bool = True
+                 describe_functions: bool = True,
+                 verbosity: bool = False
     ) -> None:
         self.llm = llm
         self.max_iter = max_iter
@@ -28,8 +29,10 @@ class DynamicLLM ():
         self.sufix = sufix
         self.functions = functions
         self.describe_functions = describe_functions
+        self.verbosity = verbosity
         
     def __call__(self, pdstring: pdstr) -> dstr:
+        if self.verbosity: print(self.build_prompt(pdstring.raw))
         for _ in range(self.max_iter) :
             stop_sequences = pdstring.stop_sequences()
             output = self.llm(
@@ -37,7 +40,7 @@ class DynamicLLM ():
                 stop=stop_sequences
             )
             result = pdstring.append(output)
-            
+            if self.verbosity: print(f"{result.code}: {output}")
             if result.code == AppendResultCode.ERROR :
                 raise GenerationError(f"ERROR code returned when appending generation to pdstr.\n{pdstring.raw}{output}")
             
