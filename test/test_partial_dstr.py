@@ -166,13 +166,13 @@ class PartialDynamicStringTest (unittest.TestCase) :
             self.assertIsInstance(stop[0], str)
             
     def test_dstr_stop_sequences_method_returns_desired_sequences_if_in_head (self) :
-        sequences = ["</HEAD>"]
+        sequences = [r"<\/HEAD>"]
         pdstring = pdstr("<HEAD>content")
 
         self.assertListEqual(pdstring.stop_sequences(), sequences)
         
     def test_dstr_stop_sequences_method_returns_desired_sequences_if_in_body (self) :
-        sequences = ["<END>", ")->"]
+        sequences = [r"<END>", r"\)->"]
         pdstring = pdstr("<HEAD></HEAD><START> ")
         
         self.assertListEqual(pdstring.stop_sequences(), sequences)

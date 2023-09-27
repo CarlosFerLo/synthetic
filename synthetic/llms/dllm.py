@@ -17,13 +17,15 @@ class DynamicLLM ():
     def __init__(self, 
                  llm: LLM, 
                  max_iter: int = 5, 
-                 prefix: str = "", 
+                 prefix: str = "",
+                 sufix: str = "",
                  functions: List[Function] = [],
                  describe_functions: bool = True
     ) -> None:
         self.llm = llm
         self.max_iter = max_iter
         self.prefix = prefix
+        self.sufix = sufix
         self.functions = functions
         self.describe_functions = describe_functions
         
@@ -34,7 +36,6 @@ class DynamicLLM ():
                 prompt=self.build_prompt(pdstring.raw),
                 stop=stop_sequences
             )
-            
             result = pdstring.append(output)
             
             if result.code == AppendResultCode.ERROR :
@@ -61,4 +62,4 @@ class DynamicLLM ():
     
     def build_prompt (self, prompt: str) -> str :
         describe_functions = "\n".join(map(lambda x: x.describe(), self.functions)) if self.describe_functions else ""   
-        return self.prefix + describe_functions + prompt
+        return self.prefix + describe_functions + self.sufix + prompt

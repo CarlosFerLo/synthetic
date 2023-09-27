@@ -134,3 +134,17 @@ class DynamicLLMTest(unittest.TestCase) :
         prompt = dllm.build_prompt("")
         
         self.assertEqual(prompt, "")
+        
+    def test_dynamic_llm_accepts_sufix_when_init (self) :
+        llm = FakeListLLM(responses=[""])
+        dllm = DynamicLLM(llm=llm, sufix="sufix")
+        
+        self.assertIsInstance(dllm, DynamicLLM)
+        
+    def test_dynamic_llm_build_prompt_appends_sufix_just_before_prompt (self):
+        llm = FakeListLLM(responses=[""])
+        functions = [Function(name="function", description="description", call=lambda x: x)]
+        dllm = DynamicLLM(llm=llm, sufix="sufix", functions=functions, prefix="prefix")
+        
+        prompt = dllm.build_prompt("prompt")
+        self.assertEqual(prompt, "prefixfunction: descriptionsufixprompt")

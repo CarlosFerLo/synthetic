@@ -32,7 +32,6 @@ class PartialDynamicString () :
         code, concatenated_string = self.validation_set.validate(concatenated_string)
         
         if code == ValidationCode.FAIL :
-            print(string)
             return AppendResult(code=AppendResultCode.ERROR)
         
         
@@ -58,15 +57,15 @@ class PartialDynamicString () :
     def stop_sequences (self) -> List[str] :
         stop_sequences = []
         if self.is_start() :
-            stop_sequences += ["<HEAD>"]
+            stop_sequences += [r"<HEAD>"]
         elif self.is_head() :
-            stop_sequences += ["</HEAD>"]
+            stop_sequences += [r"<\/HEAD>"]
         elif self.is_middle(): 
-            stop_sequences += ["<START>"]
+            stop_sequences += [r"<START>"]
         elif self.is_body() : 
-            stop_sequences += ["<END>", ")->"]
+            stop_sequences += [r"<END>", r"\)->"]
         else :
-            stop_sequences += [""]
+            stop_sequences += [r""]
             
         return stop_sequences
     
