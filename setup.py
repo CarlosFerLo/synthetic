@@ -3,7 +3,7 @@ from setuptools import find_packages
 
 setup(
     name="synthetic-cognition",
-    version="0.0.1",
+    version="{{VERSION_PLACEHOLDER}}",
     description="Synthetic Cognition general inference architecture for language model agents DEMO",
     packages=find_packages("."),
     long_description="Synthetic Cognition general inference architecture for language model agents DEMO",
