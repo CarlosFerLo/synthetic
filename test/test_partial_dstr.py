@@ -15,17 +15,22 @@ class PartialDynamicStringTest (unittest.TestCase) :
         
     
     def test_pdstr_can_be_init_if_string_has_partial_head_body_structure (self) :
-        string = "<HEAD></HEAD><START>"
-        pdstring = pdstr(string)
+        string1 = "<HEAD></HEAD><START>"
+        string2 = "<HEAD>\ncontent</HEAD>"
+        pdstring1 = pdstr(string1)
+        pdstring2 = pdstr(string2)
         
-        self.assertIsInstance(pdstring, pdstr)
+        self.assertIsInstance(pdstring1, pdstr)
+        self.assertIsInstance(pdstring2, pdstr)
         
     def test_pdstr_fails_to_init_if_string_contains_head_body_tags_with_wrong_order (self):
         string1 = "<HEAD><END></HEAD><START>"
         string2 = "<HEAD>content</HEAD><END>"
+        string3 = "<HEAD>\n<START></HEAD>"
         
         self.assertRaises(ValueError, pdstr, string1)
         self.assertRaises(ValueError, pdstr, string2)
+        self.assertRaises(ValueError, pdstr, string3)
         
     def test_pdstr_inits_with_eddited_string_if_string_has_nonwhitespace_characters_after_head (self):
         string = "<HEAD>content</HEAD> content "
@@ -37,12 +42,17 @@ class PartialDynamicStringTest (unittest.TestCase) :
         
         
     def test_pdstr_fails_to_init_if_string_has_nonwhitespace_characters_between_head_and_body (self):
-        string = "<HEAD>content</HEAD> content <START> content"
+        string1 = "<HEAD>content</HEAD> content <START> content"
+        string2 = "<HEAD>content\n</HEAD> content <START>\n"
         
         with self.assertWarns(Warning):
-            pdstring = pdstr(string)
+            pdstring1 = pdstr(string1)
         
-        self.assertEqual(pdstring.raw, "<HEAD>content</HEAD><START> content")
+        with self.assertWarns(Warning):
+            pdstring2 = pdstr(string2)
+            
+        self.assertEqual(pdstring1.raw, "<HEAD>content</HEAD><START> content")
+        self.assertEqual(pdstring2.raw, "<HEAD>content\n</HEAD><START>\n")
         
     def test_pdstr_init_works_for_empty_str (self) :
         pdstring = pdstr("")
@@ -246,3 +256,5 @@ class PartialDynamicStringTest (unittest.TestCase) :
         
         self.assertRaises(ValueError, pdstring1.get_fcall)
         self.assertRaises(ValueError, pdstring2.get_fcall)
+        
+    

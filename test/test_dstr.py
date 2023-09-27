@@ -64,3 +64,12 @@ class DynamicStringTest (unittest.TestCase):
         self.assertEqual(dstring_dict.body.children[0].input, "input")
         self.assertEqual(dstring_dict.body.children[0].output, "output")
         self.assertEqual(dstring_dict.body.children[0].id, "fcall-0")
+        
+    def test_dstr_validation_allows_multi_line_strings (self) :
+        dstring = dstr("<HEAD>\ncontent\n</HEAD>\n<START>content\ncontent\n<END>")
+        
+        self.assertIsInstance(dstring, dstr)
+        
+    def test_dstr_validation_must_catch_multi_line_function_calls_on_head (self) :
+        self.assertRaises(ValueError, dstr, "<HEAD>\n[function(con\ntent)->more\ncontent]</HEAD><START><END>")
+        
