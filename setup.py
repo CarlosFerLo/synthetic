@@ -1,9 +1,11 @@
 from distutils.core import setup
 from setuptools import find_packages
+import os
+
 
 setup(
     name="synthetic-cognition",
-    version="{{VERSION_PLACEHOLDER}}",
+    version="{{VERSION_PLACEHOLDER}}" if os.environ["ENV"] == "PROD" else "0.0.1",
     description="Synthetic Cognition general inference architecture for language model agents DEMO",
     packages=find_packages("."),
     long_description="Synthetic Cognition general inference architecture for language model agents DEMO",
