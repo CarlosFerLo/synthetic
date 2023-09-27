@@ -23,21 +23,21 @@ def get_function_calls (string: str) -> List[FunctionCall] :
     return function_calls
 
 def get_head_and_body (string: str) -> Tuple[DictElement, DictElement] :
-    extract_head_and_body = re.compile(r"^<HEAD>(.*)<\/HEAD>(\s*)<START>(.*)<END>$")
-    
+    extract_head_and_body = re.compile(r"^<HEAD>(?P<head>(.|\n)*)<\/HEAD>([\s\n]*)<START>(?P<body>(.|\n)*)<END>$")
+    string = string.strip()
     match = re.search(pattern=extract_head_and_body, string=string)
     
     if not match : raise ValueError("Invalid string! A string must be validated before using this function.")
 
     head = DictElement(
         id = "head",
-        content = match.group(1)
+        content = match.group("head")
     )
     
-    function_calls = get_function_calls(match.group(3))
+    function_calls = get_function_calls(match.group("body"))
     body = DictElement (
         id = "body",
-        content = match.group(3),
+        content = match.group("body"),
         children=function_calls
     )
     

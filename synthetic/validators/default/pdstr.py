@@ -8,7 +8,7 @@ def str_has_partial_head_body_structure_test (string: str) -> bool :
     
     match = re.findall(pattern=extract_tags, string=string)
     
-    if not match and string != "": return False
+    if not match and string.strip() != "": return False
         
     for idx, tag in enumerate(match) :
         if tag != tags[idx] : return False
@@ -16,6 +16,7 @@ def str_has_partial_head_body_structure_test (string: str) -> bool :
     return True
 
 def str_has_no_nonwhite_characters_between_head_and_body_test (string: str) -> bool :
+    string=string.strip()
     head_end_tag = re.compile(r"<\/HEAD>")
     if head_end_tag.search(string) :
         start_tag = re.compile(r"<START>")
@@ -41,13 +42,14 @@ def str_has_no_nonwhite_characters_between_head_and_body_resolve (string: str) -
         return f"<HEAD>{match.group(1)}</HEAD><START>"
 
 def str_has_no_function_calls_in_the_head_test (string: str) -> bool :
+    string = string.strip()
     has_head_start = re.compile(r"<HEAD>")
     if has_head_start.search(string) :
         has_head_end = re.compile(r"<\/HEAD>")
         
         if has_head_end.search(string) :
-            head_content_extractor = re.compile(r"<HEAD>((.|\n)*)<\/HEAD>")
-            content = head_content_extractor.match(string).group(1)
+            head_content_extractor = re.compile(r"<HEAD>(?P<head>(.|\n)*)<\/HEAD>")
+            content = head_content_extractor.match(string).group("head")
         else :
             content = re.split(pattern=has_head_start, string=string)[-1]
     

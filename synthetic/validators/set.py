@@ -10,7 +10,6 @@ class ValidatorSet ():
         
     def validate (self, string: str) -> Tuple[ValidationCode, str]:
         code = ValidationCode.OK
-        string = string.strip()
         for validator in self.validators :
             new_code, string = validator.validate(string)
             

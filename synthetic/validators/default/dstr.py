@@ -3,6 +3,7 @@ import re
 from synthetic.validators import ValidatorSet, Validator
 
 def str_has_head_body_structure_test (string: str) -> bool :
+    string = string.strip()
     head_body_structure = re.compile(r"^<HEAD>((.|\n)*)<\/HEAD>([\s\n]*)<START>((.|\n)*)<END>$", flags=re.M)
     
     if re.match(string=string, pattern=head_body_structure) : return True
