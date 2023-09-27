@@ -27,7 +27,7 @@ def get_head_and_body (string: str) -> Tuple[DictElement, DictElement] :
     string = string.strip()
     match = re.search(pattern=extract_head_and_body, string=string)
     
-    if not match : raise ValueError("Invalid string! A string must be validated before using this function.")
+    if not match : raise ValueError(f"Invalid string! A string must be validated before using this function. String: {string}")
 
     head = DictElement(
         id = "head",

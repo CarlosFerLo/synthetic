@@ -39,7 +39,7 @@ class DynamicLLM ():
             result = pdstring.append(output)
             
             if result.code == AppendResultCode.ERROR :
-                raise GenerationError("ERROR code returned when appending generation to pdstr.")
+                raise GenerationError(f"ERROR code returned when appending generation to pdstr.\n{pdstring.raw}{output}")
             
             if result.state.location == Location.START :
                 pdstring.append("<HEAD>")
