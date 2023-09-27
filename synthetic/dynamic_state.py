@@ -4,7 +4,7 @@ from enum import Enum
 Location = Enum("Location", ["HEAD", "BODY", "START", "MIDDLE", "END"])
 
 head_start = re.compile(r"<HEAD>")
-head_end = re.compile(r"</HEAD>")
+head_end = re.compile(r"<\/HEAD>")
 body_start = re.compile(r"<START>")
 body_end = re.compile(r"<END>")
 class DynamicState () :

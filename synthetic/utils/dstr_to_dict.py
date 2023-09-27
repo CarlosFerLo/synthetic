@@ -23,7 +23,7 @@ def get_function_calls (string: str) -> List[FunctionCall] :
     return function_calls
 
 def get_head_and_body (string: str) -> Tuple[DictElement, DictElement] :
-    extract_head_and_body = re.compile(r"^<HEAD>(.*)</HEAD>(\s*)<START>(.*)<END>$")
+    extract_head_and_body = re.compile(r"^<HEAD>(.*)<\/HEAD>(\s*)<START>(.*)<END>$")
     
     match = re.search(pattern=extract_head_and_body, string=string)
     
