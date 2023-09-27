@@ -42,8 +42,8 @@ class PartialDynamicStringTest (unittest.TestCase) :
         
         
     def test_pdstr_fails_to_init_if_string_has_nonwhitespace_characters_between_head_and_body (self):
-        string1 = "<HEAD>content</HEAD> content <START> content"
-        string2 = "<HEAD>content\n</HEAD> content <START>\n"
+        string1 = "<HEAD>content</HEAD> something <START> extra"
+        string2 = "<HEAD>content\n</HEAD> someone <START>\n"
         
         with self.assertWarns(Warning):
             pdstring1 = pdstr(string1)
@@ -51,7 +51,7 @@ class PartialDynamicStringTest (unittest.TestCase) :
         with self.assertWarns(Warning):
             pdstring2 = pdstr(string2)
             
-        self.assertEqual(pdstring1.raw, "<HEAD>content</HEAD><START> content")
+        self.assertEqual(pdstring1.raw, "<HEAD>content</HEAD><START> extra")
         self.assertEqual(pdstring2.raw, "<HEAD>content\n</HEAD><START>\n")
         
     def test_pdstr_init_works_for_empty_str (self) :

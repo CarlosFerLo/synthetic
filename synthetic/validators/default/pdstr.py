@@ -31,9 +31,10 @@ def str_has_no_nonwhite_characters_between_head_and_body_test (string: str) -> b
 def str_has_no_nonwhite_characters_between_head_and_body_resolve (string: str) -> str :
     start_tag = re.compile(r"<START>")
     if start_tag.search(string) :
-        extract_content = re.compile(r"<HEAD>((.|\n)*)<\/HEAD>((.|\n)*)<START>((.|\n)*)")
+        extract_content = re.compile(r"<HEAD>(?P<head>(.|\n)*)<\/HEAD>((.|\n)*)<START>(?P<body>(.|\n)*)")
         match = extract_content.match(string)
-        return f"<HEAD>{match.group(1)}</HEAD><START>{match.group(3)}"
+        return f"<HEAD>{match.group('head')}</HEAD><START>{match.group('body')}"
+        
     else :
         extract_content = re.compile(r"<HEAD>((.|\n)*)<\/HEAD>")
         match = extract_content.match(string)
