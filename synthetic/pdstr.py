@@ -63,8 +63,8 @@ class PartialDynamicString () :
             stop_sequences += ["</HEAD>"]
         elif self.is_middle(): 
             stop_sequences += ["<START>"]
-        elif self.is_body() :
-            stop_sequences += ["<END>", "\)->"]
+        elif self.is_body() : 
+            stop_sequences += ["<END>", ")->"]
         else :
             stop_sequences += [""]
             
