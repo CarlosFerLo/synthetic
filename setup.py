@@ -11,5 +11,4 @@ setup(
     author_email="carlos.ferlo6165@gmail.com",
     fullname="Synthetic Cognition",
     keywords=["language models", "inference", "agents", "autonomous", "llm"],
-    
 )

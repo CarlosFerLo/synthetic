@@ -32,6 +32,7 @@ class PartialDynamicString () :
         code, concatenated_string = self.validation_set.validate(concatenated_string)
         
         if code == ValidationCode.FAIL :
+            print(string)
             return AppendResult(code=AppendResultCode.ERROR)
         
         
