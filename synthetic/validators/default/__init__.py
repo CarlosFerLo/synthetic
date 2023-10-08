@@ -1,2 +1,0 @@
-from .dstr import DSTR_DEFAULT_VALIDATOR_SET
-from .pdstr import PDSTR_DEFAULT_VALIDATOR_SET

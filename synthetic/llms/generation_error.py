@@ -1,2 +1,0 @@
-class GenerationError (Exception):
-    pass
