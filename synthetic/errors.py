@@ -4,3 +4,7 @@ class Error (Exception) :
 class RegexError (Error) :
     """ This error is raised if some regex expression fails to compile
     """
+    
+class PromptTemplateError (Error) :
+    """ Base class for errors on Prompt Templates
+    """
