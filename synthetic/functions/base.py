@@ -1,4 +1,4 @@
-from typing import Protocol
+from typing import Any, Protocol
 
 class FunctionCall (Protocol) :
     """Base type for the callable property of a Function
@@ -17,3 +17,6 @@ class Function () :
         self.name = name
         self.description = description
         self.func = func
+        
+    def __call__(self, input: str) -> Any:
+        return self.func(input)

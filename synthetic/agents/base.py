@@ -1,10 +1,12 @@
 from typing import List
 
+from .agent_output import AgentOutput
+
 import synthetic.re as re
 from synthetic.llms import LLM
 from synthetic.prompts import PromptTemplate
 from synthetic.functions import Function
-from synthetic.errors import InvalidSignatureError
+from synthetic.errors import InvalidSignatureError, InvalidFunctionNameError
 
 class Agent () :
     """ Agent class for synthetic.
@@ -12,7 +14,12 @@ class Agent () :
     llm: LLM
     prompt_template: PromptTemplate
     functions: List[Function]
+    
     signature: str
+    signature_pattern: re.Pattern
+    partial_signature: str
+    partial_signature_pattern: re.Pattern
+    function_output_suffix: str
       
     def __init__(self, 
                  llm: LLM,
@@ -26,9 +33,46 @@ class Agent () :
         
         self._validate_signature(signature)
         self.signature = signature
-        self.signature_pattern = re.compile(signature, key_pattern_dict={ "name": "(\S*)" })
-        self.partial_signature = signature.split("{output}")[0]
-        self.partial_signature_pattern = re.compile(self.partial_signature, key_pattern_dict={ "name": "(\S*)"})
+        self.signature_pattern = re.compile(signature, key_pattern_dict={ "name": r"(\S*)" })
+        
+        self.partial_signature, self.function_output_suffix = signature.split("{output}")
+        self.partial_signature_pattern = re.compile(self.partial_signature + "$", key_pattern_dict={ "name": r"(\S*)"}, flags = re.M)
+        
+    def call(self, max_iters: int = 10, **kwargs) -> AgentOutput :
+        prompt = self.prompt_template.format(**kwargs)
+        generation = ""
+        
+        for _ in range(0, max_iters) :
+            stop = self._stop_sequences()
+            gen = self.llm(
+                prompt=prompt,
+                stop=stop
+            )
+            
+            generation += gen
+            prompt += gen
+            
+            if not any([ re.search(s, prompt) for s in stop]) :
+                break
+                
+            m = re.search(self.partial_signature_pattern, prompt)
+            if m :
+                function_called = False
+                for function in self.functions:
+                    if function.name == m["name"]:
+                        output = function(input = m["input"])
+                        function_called = True
+                        break
+                if not function_called:
+                    raise InvalidFunctionNameError(f"No function with name: {m['name']}")
+                
+                generation += output + self.function_output_suffix
+                prompt += output + self.function_output_suffix
+            
+        return AgentOutput(
+            generation=generation,
+            raw=prompt
+        )
         
     def _validate_signature (self, signature: str) -> None :
         required_elements = ["{name}" , "{input}", "{output}"]
@@ -37,3 +81,6 @@ class Agent () :
         for i in range(len(required_elements) - 1):
             if signature.index(required_elements[i]) > signature.index(required_elements[i + 1]):
                 raise InvalidSignatureError("Elements in signature must be in the order: {name}, {input}, {output}.")
+
+    def _stop_sequences (self) -> List[str | re.Pattern] :
+        return [ self.partial_signature_pattern ]

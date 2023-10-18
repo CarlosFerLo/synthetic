@@ -85,10 +85,24 @@ class AgentsTest (unittest.TestCase) :
                     "Output: {output}\n" 
                     
         agent = synthetic.Agent(llm, prompt_template=prompt_template, signature=signature)
-        pattern = re.std_compile("Action: (?P<name>(\\S*))\nAction Input: (?P<input>(.*))\nOutput: ")
+        pattern = re.std_compile("Action: (?P<name>(\\S*))\nAction Input: (?P<input>(.*))\nOutput: $", flags=re.M)
         
         self.assertEqual(agent.partial_signature, "Action: {name}\nAction Input: {input}\nOutput: ")
         self.assertIsInstance(agent.partial_signature_pattern, re.Pattern)
         self.assertEqual(agent.partial_signature_pattern, pattern)
+        
+    def test_agent_calls_function_with_function_signature (self) :
+        llm = synthetic.llms.FakeLLM(responses=["[evaluate(1 + 1)->more things", "something"])
+        prompt_template = synthetic.PromptTemplate(template="{query}", input_variables=["query"]) 
+        
+        @synthetic.function(name="evaluate", description="")
+        def evaluate (a) :
+            return str(eval(a))
+        agent = synthetic.Agent(llm, prompt_template, functions=[evaluate])
+        
+        output = agent.call(query="add 1 + 1")
+        
+        self.assertIsInstance(output, synthetic.AgentOutput)
+        self.assertEqual(output.generation, "[evaluate(1 + 1)->2]something")
         
     

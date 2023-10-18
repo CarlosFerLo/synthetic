@@ -12,3 +12,11 @@ class PromptTemplateError (Error) :
 class InvalidSignatureError (Error) :
     """ This error raises if the validations checks for a signature fail
     """
+    
+class GenerationError (Error) :
+    """ This error raises when the LLM generation causes an irregularity on the working of the Agent.
+    """
+    
+class InvalidFunctionNameError (GenerationError) :
+    """ This error raises if the LLM tries to call a function that is not in the functions list of the Agent.
+    """
