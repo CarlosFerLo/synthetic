@@ -23,10 +23,19 @@ class SyntheticReGexTest(unittest.TestCase) :
         self.assertIsInstance(pattern, re.Pattern)
         self.assertEqual(pattern, std_re.compile(r"something (?P<content>(\w*)) more"))
         
-    def test_re_search_function_accepts_str_or_pattern_and_string_and_returns_match_object (self) :
+    def test_re_search_function_accepts_str_or_pattern_and_string_and_returns_extended_match_object (self) :
         expression = "something {content} more"
         pattern = re.compile(expression) 
         
         output = re.search(pattern, "something content more")
         self.assertIsInstance(output, re.Match)
         self.assertEqual(output["content"], "content")
+        
+    def test_re_search_works_if_multiple_groups_are_given (self) :
+        expression = "one group: {one}, another group: {two} more content"
+        pattern = re.compile(expression)
+        
+        output = re.search(pattern, "one group: one, another group: two more content")
+        self.assertIsInstance(output, re.Match)
+        self.assertEqual(output["one"], "one")
+        self.assertEqual(output["two"], "two")

@@ -8,3 +8,7 @@ class RegexError (Error) :
 class PromptTemplateError (Error) :
     """ Base class for errors on Prompt Templates
     """
+    
+class InvalidSignatureError (Error) :
+    """ This error raises if the validations checks for a signature fail
+    """

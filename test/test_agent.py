@@ -1,5 +1,8 @@
 import unittest
+import warnings
+
 import synthetic
+import synthetic.re as re
 
 class AgentsTest (unittest.TestCase) :
     def test_agent_init_with_llm_prompt_template_and_functions (self) :
@@ -26,3 +29,66 @@ class AgentsTest (unittest.TestCase) :
         
         self.assertIsInstance(agent, synthetic.Agent)
         self.assertListEqual(agent.functions, [func])
+
+    def test_agent_init_with_optional_function_signature_parameter (self) :
+        llm = synthetic.llms.FakeLLM(responses=[""])
+        prompt_template =  synthetic.PromptTemplate(template="{query}", input_variables=["query"])
+        
+        agent = synthetic.Agent(llm=llm, prompt_template=prompt_template,
+                                signature="[{name}({input}){output}]")
+        
+        self.assertIsInstance(agent, synthetic.Agent)
+        self.assertEqual(agent.signature, "[{name}({input}){output}]")
+        
+    def test_agent_validates_signature (self) :
+        llm = synthetic.llms.FakeLLM(responses=[""])
+        prompt_template =  synthetic.PromptTemplate(template="{query}", input_variables=["query"])
+        
+        with self.assertRaises(synthetic.InvalidSignatureError):
+            synthetic.Agent(llm=llm, prompt_template=prompt_template,
+                            signature="[{name}]")
+        with self.assertRaises(synthetic.InvalidSignatureError):
+            synthetic.Agent(llm=llm, prompt_template=prompt_template,
+                            signature="[{input}]")
+        with self.assertRaises(synthetic.InvalidSignatureError):
+            synthetic.Agent(llm=llm, prompt_template=prompt_template,
+                            signature="[{output}]")
+        with self.assertRaises(synthetic.InvalidSignatureError):
+            synthetic.Agent(llm=llm, prompt_template=prompt_template,
+                            signature="[{name}:{input}]")
+        with self.assertRaises(synthetic.InvalidSignatureError):
+            synthetic.Agent(llm=llm, prompt_template=prompt_template,
+                            signature="[{name}:{output}]")
+        with self.assertRaises(synthetic.InvalidSignatureError):
+            synthetic.Agent(llm=llm, prompt_template=prompt_template,
+                            signature="[{input}:{output}]")
+            
+    def test_agent_signature_gets_compiled_to_signature_pattern (self) :
+        llm = synthetic.llms.FakeLLM(responses=[""])
+        prompt_template =  synthetic.PromptTemplate(template="{query}", input_variables=["query"])
+        signature = "Action: {name}\n" \
+                    "Action Input: {input}\n" \
+                    "Output: {output}\n"
+                    
+        agent = synthetic.Agent(llm, prompt_template, signature=signature)
+
+        pattern = re.std_compile("Action: (?P<name>(\\S*))\nAction Input: (?P<input>(.*))\nOutput: (?P<output>(.*))\n") 
+        
+        self.assertIsInstance(agent.signature_pattern, re.Pattern)
+        self.assertEqual(agent.signature_pattern, pattern)
+         
+    def test_agent_partial_sognature_pattern_gets_generated_and_compiled (self) :
+        llm = synthetic.llms.FakeLLM(responses=[""])
+        prompt_template =  synthetic.PromptTemplate(template="{query}", input_variables=["query"])
+        signature = "Action: {name}\n" \
+                    "Action Input: {input}\n" \
+                    "Output: {output}\n" 
+                    
+        agent = synthetic.Agent(llm, prompt_template=prompt_template, signature=signature)
+        pattern = re.std_compile("Action: (?P<name>(\\S*))\nAction Input: (?P<input>(.*))\nOutput: ")
+        
+        self.assertEqual(agent.partial_signature, "Action: {name}\nAction Input: {input}\nOutput: ")
+        self.assertIsInstance(agent.partial_signature_pattern, re.Pattern)
+        self.assertEqual(agent.partial_signature_pattern, pattern)
+        
+    
