@@ -84,7 +84,7 @@ class Agent () :
                 raise InvalidSignatureError("Elements in signature must be in the order: {name}, {input}, {output}.")
 
     def _stop_sequences (self) -> List[str | re.Pattern] :
-        return [ self.partial_signature_pattern ]
+        return [ self.partial_signature_pattern.pattern ]
     
     def _get_function_calls (self, string: str) -> List[FunctionCall] :
         matches = re.findall(self.signature_pattern, string)
