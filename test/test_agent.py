@@ -72,7 +72,7 @@ class AgentsTest (unittest.TestCase) :
                     
         agent = synthetic.Agent(llm, prompt_template, signature=signature)
 
-        pattern = re.std_compile("Action: (?P<name>(\\S*))\nAction Input: (?P<input>(.*))\nOutput: (?P<output>(.*))\n") 
+        pattern = re._compile("Action: (?P<name>(\\S*))\nAction Input: (?P<input>(.*))\nOutput: (?P<output>(.*))\n") 
         
         self.assertIsInstance(agent.signature_pattern, re.Pattern)
         self.assertEqual(agent.signature_pattern, pattern)
@@ -85,7 +85,7 @@ class AgentsTest (unittest.TestCase) :
                     "Output: {output}\n" 
                     
         agent = synthetic.Agent(llm, prompt_template=prompt_template, signature=signature)
-        pattern = re.std_compile("Action: (?P<name>(\\S*))\nAction Input: (?P<input>(.*))\nOutput: $", flags=re.M)
+        pattern = re._compile("Action: (?P<name>(\\S*))\nAction Input: (?P<input>(.*))\nOutput: $", flags=re.M)
         
         self.assertEqual(agent.partial_signature, "Action: {name}\nAction Input: {input}\nOutput: ")
         self.assertIsInstance(agent.partial_signature_pattern, re.Pattern)
@@ -104,5 +104,20 @@ class AgentsTest (unittest.TestCase) :
         
         self.assertIsInstance(output, synthetic.AgentOutput)
         self.assertEqual(output.generation, "[evaluate(1 + 1)->2]something")
-        
+        self.assertEqual(output.raw, "add 1 + 1[evaluate(1 + 1)->2]something")
     
+    def test_agent_output_contains_function_calls_and_it_contains_a_function_call_datastructure (self) :
+        llm = synthetic.llms.FakeLLM(responses=["[evaluate(1 + 1)->more things", "something"])
+        prompt_template = synthetic.PromptTemplate(template="{query}", input_variables=["query"]) 
+        
+        @synthetic.function(name="evaluate", description="")
+        def evaluate (a) :
+            return str(eval(a))
+        agent = synthetic.Agent(llm, prompt_template, functions=[evaluate])
+        
+        output = agent.call(query="add 1 + 1")
+        
+        self.assertIsInstance(output.function_calls[0], synthetic.FunctionCall)
+        self.assertEqual(output.function_calls[0].name, "evaluate")
+        self.assertEqual(output.function_calls[0].input, "1 + 1")
+        self.assertEqual(output.function_calls[0].output, "2")

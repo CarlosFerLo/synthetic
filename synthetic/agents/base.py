@@ -1,6 +1,6 @@
 from typing import List
 
-from .agent_output import AgentOutput
+from .agent_output import AgentOutput, FunctionCall
 
 import synthetic.re as re
 from synthetic.llms import LLM
@@ -71,7 +71,8 @@ class Agent () :
             
         return AgentOutput(
             generation=generation,
-            raw=prompt
+            raw=prompt,
+            function_calls=self._get_function_calls(prompt)
         )
         
     def _validate_signature (self, signature: str) -> None :
@@ -84,3 +85,14 @@ class Agent () :
 
     def _stop_sequences (self) -> List[str | re.Pattern] :
         return [ self.partial_signature_pattern ]
+    
+    def _get_function_calls (self, string: str) -> List[FunctionCall] :
+        matches = re.findall(self.signature_pattern, string)
+        print(matches)
+        return [
+            FunctionCall(
+                name=m["name"],
+                input=m["input"],
+                output=m["output"]
+            ) for m in matches
+        ]
