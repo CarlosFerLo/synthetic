@@ -88,7 +88,6 @@ class Agent () :
     
     def _get_function_calls (self, string: str) -> List[FunctionCall] :
         matches = re.findall(self.signature_pattern, string)
-        print(matches)
         return [
             FunctionCall(
                 name=m["name"],
