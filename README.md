@@ -1,26 +1,33 @@
 # synthetic
 Synthetic Cognitions framework for developing language model agents.
 
-## Features
-With synthetic we introduce an easy way to work with currently known and used concepts for agents like [functions](#functions) and introduce new ones as [tags](#tags) and [widgets](#tags).
+# Mission
+In Synthetic Cognition we are commited to provide developers the latest advancements in language model agents. This way we make adoption and innovation easyer for everyone.
 
-### Functions
-The concept of function is well known to coders, but in the case of language model agents it mainly consists of an object that accepts a string as an input and returns one as an output. This kind of function was used in the [ReAct](https://arxiv.org/abs/2210.03629) paper, but synthetic functions are inspired in the ones on the [Toolformer](https://arxiv.org/abs/2302.04761) paper. (For a further explanation of how functions work read the Toolformer article)
+# Values
+- Open Knowledge: All the research and products will be fully open source so everyone has access to them and the posibility to iterate on top of them.
 
-Wheras in those cases functions where expected only to return a string, here we will go a step further allowing them to modify the prompt and generated sequence itself. This comes handy when working with [tags](#tags) and [widgets](#widgets).
+- Innovation: We do not only make an easy way to apply current advancements, we are constantly pursuing new innovations on our field.
 
-### Tags
-Tags are the main concept that this framework introduces. They are just a wrapper around plain text in the prompt or the generation (we will stop to distinguish them further down), just like HTML tags.
+# Vission
+We want to be the Verecel of Language Model Agents.
 
-A tag consist of 3 things: identifier, id, content. Here is an example:
-    <identifier:id> content </identifier>
+# Problem
+- Current frameworks are based on the ReAct architecture and have no or very limited support for new advancements.
+- Cloud services targeting generative AI focus on deployment of models but in the case of agents you have to manage it yourself.
 
-Then we can start to make this concept more and more complexity. First we can add [style validators](#validators) for the content of a tag to guarantee the generation of the language model follows the style we thought of for that tag. For example:
+# Solution
+The solution is to create a new framework built from the ground up to support integral changes to the agent architecture to ease the development of new architectures and offer agent hosting services to keep developers in what they are good at, AI.
 
-    This would work: <no-spaces:id>thisTextHasNoSpaces</no-spaces> 
-    This will fail: <no-spaces:id>this text has spaces</no-spaces>
+# Product
+We are developping the **synthetic** library with an easy to use API but with the adaptability to suport changes in the base architecture. We are also introducing new features to agents that allow to solve fundamental problems of the current architectures.
+All of the library will be designed to make deployment on the **Synthetic Cloud** fast and continuous.
 
-Validators can update tag content when the test fails and can also be run if the tag is closed (for more info go to the [Validators](#validators) section).
+# Market Oportunity
+More than 400 public repositories (>100 stars) are currently dependent on langchain, including some of the leading AGI and language model agent projects.
 
-// TODO: end README.md
+//TODO: continue
+
+# Customers
+We are targeting language model agent developers, this engloves from those developping simple pipelines to those developing complex agent architectures. AI developers are not familiar with deployment and maintainance of servers as they are used to easy deployment t
 
