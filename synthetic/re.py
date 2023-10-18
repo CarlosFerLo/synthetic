@@ -1,7 +1,7 @@
 from typing import Dict, List
 
 from re import *
-from re import compile as _compile, findall as _findall, RegexFlag
+from re import compile as _compile, findall as _findall, RegexFlag, search as _search
 
 _GET_KEY_NAMES = _compile(r"{([^[{}]*)}")
 
@@ -13,8 +13,17 @@ def compile (string: str, key_pattern_dict: Dict[str, str] = {}, flags: int | Re
         string = string.replace("{" + m + "}", f"(?P<{m}>{p})")
     return _compile(string, flags=flags)
 
-def findall (pattern: bytes | Pattern[bytes], string: str, flags: int | RegexFlag = 0) -> List[Dict[str, str]] :
-    return []
+def findall(pattern: bytes | Pattern[bytes], string: str, flags: int | RegexFlag = 0) -> List[Dict[str, str]]:
+    compiled_pattern = _compile(pattern, flags=flags) if isinstance(pattern, bytes) else pattern
+    matches = []
+    while string:
+        match = _search(compiled_pattern, string)
+        if match:
+            matches.append(match.groupdict())
+            string = string[match.end():]
+        else:
+            break
+    return matches    
     
 def _to_parseable (string: str) -> str :
     string = string.replace("(", r"\(").replace(")", r"\)")
