@@ -27,23 +27,5 @@ class PromtTemplateTest (unittest.TestCase):
         
         self.assertRaises(synthetic.PromptTemplateError, prompt_template.format, query="query")
         self.assertRaises(synthetic.PromptTemplateError, prompt_template.format, query="query", response="response", other="other")
+   
     
-    def test_prompt_template_accepts_optional_prefix_when_init (self) :
-        prompt_template = synthetic.PromptTemplate(
-            template="{query} and {response}",
-            input_variables=["query", "response"],
-            prefix="prefix\n",
-        )
-        
-        self.assertIsInstance(prompt_template, synthetic.PromptTemplate)
-        self.assertEqual(prompt_template.prefix, "prefix\n")
-        
-    def test_prompt_template_format_adds_prefix_to_the_start_of_a_the_sequence (self) :
-        prompt_template = synthetic.PromptTemplate(
-            template="{query} and {response}",
-            input_variables=["query", "response"],
-            prefix="prefix\n",
-        )
-        
-        prompt = prompt_template.format(query="query", response="response")
-        self.assertEqual(prompt, "prefix\nquery and response")

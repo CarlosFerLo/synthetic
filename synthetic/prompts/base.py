@@ -15,12 +15,11 @@ class PromptTemplate () :
     template: str
     input_variables: List[str]
     
-    def __init__(self, template: str, input_variables: List[str], prefix: Optional[str] = None) -> None:
-        self.validate(template=template, input_variables=input_variables, prefix=prefix)
+    def __init__(self, template: str, input_variables: List[str]) -> None:
+        self.validate(template=template, input_variables=input_variables)
         
         self.template = template
         self.input_variables = input_variables
-        self.prefix = prefix
         
     def format(self, **kwargs: Any) -> str :
         if kwargs.keys() != set(self.input_variables) :
@@ -29,9 +28,6 @@ class PromptTemplate () :
             prompt = self.template.format(**kwargs)
         except KeyError as e :
             raise synthetic.PromptTemplateError(e)
-        
-        if self.prefix is not None :
-            prompt = self.prefix + prompt
         
         return prompt
     
