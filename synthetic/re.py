@@ -19,7 +19,10 @@ def findall(pattern: bytes | Pattern[bytes], string: str, flags: int | RegexFlag
     while string:
         match = _search(compiled_pattern, string)
         if match:
-            matches.append(match.groupdict())
+            match_dict = match.groupdict()
+            match_dict["match"] = match.group()
+            
+            matches.append(match_dict)
             string = string[match.end():]
         else:
             break

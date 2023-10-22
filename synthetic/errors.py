@@ -9,6 +9,10 @@ class PromptTemplateError (Error) :
     """ Base class for errors on Prompt Templates
     """
     
+class ComponentConflictError (PromptTemplateError) :
+    """ This error raises if try to add two components with the same name to a template
+    """
+    
 class InvalidSignatureError (Error) :
     """ This error raises if the validations checks for a signature fail
     """

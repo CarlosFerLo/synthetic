@@ -1,3 +1,4 @@
+from typing import Any, List
 import unittest
 import synthetic
 
@@ -26,6 +27,62 @@ class PromtTemplateTest (unittest.TestCase):
         self.assertEqual(result, "query and response")
         
         self.assertRaises(synthetic.PromptTemplateError, prompt_template.format, query="query")
-        self.assertRaises(synthetic.PromptTemplateError, prompt_template.format, query="query", response="response", other="other")
-   
-    
+
+        result = prompt_template.format(query="query", response="response", other="other")
+        self.assertIsInstance(result, str)
+        self.assertEqual(result, "query and response")
+  
+    def test_prompt_template_accepts_optional_components_list_at_init (self) :
+        components = [ synthetic.Component ] 
+      
+        prompt_template = synthetic.PromptTemplate(
+            template="<Component/>{query}", input_variables=["query"],
+            components=components
+        )
+        
+        self.assertIsInstance(prompt_template, synthetic.PromptTemplate)
+        self.assertListEqual(prompt_template.components, components)
+        
+    def test_prompt_template_has_a_method_to_add_components (self) :
+        prompt_template = synthetic.PromptTemplate(
+            template="<Component/>{query}", input_variables=["query"],
+            components=[ synthetic.Component ]
+        )
+        
+        class MyComponent (synthetic.Component) :
+            name = "MyComponent"
+        
+        prompt_template.add_components([ MyComponent ])
+        self.assertListEqual(prompt_template.components, [ synthetic.Component, MyComponent ])
+        
+    def test_prompt_template_raises_prompt_template_error_component_conflict_if_two_components_have_the_same_name (self) :
+        with self.assertRaises(synthetic.ComponentConflictError) :
+            prompt_template = synthetic.PromptTemplate(template="{query}", input_variables=["query"], components=[synthetic.Component, synthetic.Component])
+        
+        prompt_template = synthetic.PromptTemplate(template="{query}", input_variables=["query"], components=[synthetic.Component])    
+        with self.assertRaises(synthetic.ComponentConflictError) :
+            prompt_template.add_components([synthetic.Component])
+            
+    def test_prompt_template_format_method_substitutes_signatures_by_the_component_format_output (self) :
+        class MyComponent (synthetic.Component) :
+            name="MyComponent"
+            
+            def format(self, **kwargs: Any) -> str:
+                return "MyComponent"
+            
+        prompt_template = synthetic.PromptTemplate(template="<MyComponent/>", input_variables=[], components=[MyComponent])
+        prompt = prompt_template.format()
+        
+        self.assertEqual(prompt, "MyComponent")
+        
+    def test_prompt_template_format_method_accepts_extra_keyword_arguments_and_pass_them_to_component_format (self) :
+        class MyComponent (synthetic.Component) :
+            name = "MyComponent"
+            
+            def format(self, name: str, **kwargs) -> str :
+                return f"Hello {name}"
+            
+        prompt_template = synthetic.PromptTemplate(template="<MyComponent/>", input_variables=[], components=[MyComponent])
+        prompt = prompt_template.format(name="Carlos")
+        
+        self.assertEqual(prompt, "Hello Carlos") 
