@@ -86,3 +86,13 @@ class PromtTemplateTest (unittest.TestCase):
         prompt = prompt_template.format(name="Carlos")
         
         self.assertEqual(prompt, "Hello Carlos") 
+        
+    def test_prompt_template_format_method_raises_error_if_keyword_argument_from_a_component_not_passed (self) :
+        class MyComponent (synthetic.Component) :
+            name = "MyComponent"
+            
+            def format(self, name: str, **kwargs) -> str :
+                return f"Hello {name}"
+            
+        prompt_template = synthetic.PromptTemplate(template="<MyComponent/>", input_variables=[], components=[MyComponent])
+        self.assertRaises(synthetic.PromptTemplateError, prompt_template.format)

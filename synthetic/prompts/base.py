@@ -45,7 +45,10 @@ class PromptTemplate () :
             matches = re.findall(signature, prompt)
             for m in matches :
                 inst = comp(**m)
-                string = inst.format(**kwargs)
+                try :
+                    string = inst.format(**kwargs)
+                except TypeError as e :
+                    raise synthetic.PromptTemplateError(e)
                 prompt = prompt.replace(m["match"], string, 1)
             
         return prompt
