@@ -4,6 +4,7 @@ import synthetic.re as re
 
 class Component () :
     name: str = "Component"
+    is_dynamic: bool = False
     
     id: str
     

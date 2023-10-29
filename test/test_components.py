@@ -45,3 +45,15 @@ class ComponentsTest (unittest.TestCase) :
         self.assertIsInstance(string, str)
         self.assertEqual(string, "string")
         
+    def test_component_class_has_atr_is_dynamic_that_defaults_to_false_but_can_be_overwritten_when_creating_a_new_class (self) :
+        self.assertFalse(synthetic.Component.is_dynamic)
+        
+        class NewComponent (synthetic.Component) :
+            pass
+        
+        self.assertFalse(NewComponent.is_dynamic)
+        
+        class NewDynamicComponent (synthetic.Component) :
+            is_dynamic = True
+            
+        self.assertTrue(NewDynamicComponent.is_dynamic)
