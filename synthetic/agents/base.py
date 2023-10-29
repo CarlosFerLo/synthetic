@@ -50,7 +50,7 @@ class Agent () :
         
         
     def call(self, max_iters: int = 10, **kwargs) -> AgentOutput :
-        prompt = self.prompt_template.format(**kwargs)
+        prompt = self.prompt_template.format(**dict(kwargs, **self.__dict__))
         generation = ""
         
         for _ in range(0, max_iters) :

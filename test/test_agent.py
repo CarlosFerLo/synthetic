@@ -1,5 +1,5 @@
 import unittest
-import warnings
+from typing import List
 
 import synthetic
 import synthetic.re as re
@@ -134,3 +134,23 @@ class AgentsTest (unittest.TestCase) :
         self.assertIsInstance(agent, synthetic.Agent)
         self.assertListEqual(agent.components, [ DynamicComponent ])
         self.assertLessEqual(agent.prompt_template.components, [ synthetic.Component ])
+        
+    def test_agent_passes_all_its_properties_to_the_prompt_template_for_formatting (self) :
+        llm = synthetic.llms.FakeLLM(responses=[""])
+        prompt_template = synthetic.PromptTemplate(template="<MyComponent/>", input_variables=[])
+        
+        @synthetic.function(name="evaluate", description="")
+        def evaluate (string: str) -> str :
+            return str(eval(string))
+        class MyComponent (synthetic.Component) :
+            name="MyComponent"
+            def format (self, **kwargs) -> str :
+                functions: List[synthetic.Function] = kwargs.get("functions")
+                return " ".join([ f.name for f in functions])
+            
+        agent = synthetic.Agent(llm=llm, prompt_template=prompt_template, functions=[evaluate], components=[MyComponent])
+        
+        output = agent.call()
+        
+        self.assertEqual(output.raw, "evaluate")
+        
