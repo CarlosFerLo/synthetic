@@ -15,6 +15,7 @@ class Agent () :
     llm: LLM
     prompt_template: PromptTemplate
     functions: List[Function]
+    components: List[Type[Component]]
     
     signature: str
     signature_pattern: re.Pattern
