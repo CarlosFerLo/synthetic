@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Type
 
 from .agent_output import AgentOutput, FunctionCall
 
@@ -7,6 +7,7 @@ from synthetic.llms import LLM
 from synthetic.prompts import PromptTemplate
 from synthetic.functions import Function
 from synthetic.errors import InvalidSignatureError, InvalidFunctionNameError
+from synthetic.components import Component
 
 class Agent () :
     """ Agent class for synthetic.
@@ -25,7 +26,8 @@ class Agent () :
                  llm: LLM,
                  prompt_template: PromptTemplate, 
                  functions: List[Function] = [],
-                 signature: str = "[{name}({input})->{output}]"
+                 signature: str = "[{name}({input})->{output}]",
+                 components: List[Type[Component]] = []
         ) -> None:
         self.llm = llm
         self.prompt_template = prompt_template
@@ -37,6 +39,14 @@ class Agent () :
         
         self.partial_signature, self.function_output_suffix = signature.split("{output}")
         self.partial_signature_pattern = re.compile(self.partial_signature + "$", key_pattern_dict={ "name": r"(\S*)"}, flags = re.M)
+        
+        dynamic_components, static_components = [], []
+        for c in components :
+            (static_components, dynamic_components)[c.is_dynamic].append(c)
+            
+        self.components = dynamic_components
+        self.prompt_template.add_components(static_components)
+        
         
     def call(self, max_iters: int = 10, **kwargs) -> AgentOutput :
         prompt = self.prompt_template.format(**kwargs)

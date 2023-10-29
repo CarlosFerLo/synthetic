@@ -106,7 +106,7 @@ class AgentsTest (unittest.TestCase) :
         self.assertEqual(output.generation, "[evaluate(1 + 1)->2]something")
         self.assertEqual(output.raw, "add 1 + 1[evaluate(1 + 1)->2]something")
     
-    def test_agent_output_contains_function_calls_and_it_contains_a_function_call_datastructure (self) :
+    def test_agent_output_contains_function_calls_and_it_contains_a_function_call_data_structure (self) :
         llm = synthetic.llms.FakeLLM(responses=["[evaluate(1 + 1)->more things", "something"])
         prompt_template = synthetic.PromptTemplate(template="{query}", input_variables=["query"]) 
         
@@ -121,3 +121,16 @@ class AgentsTest (unittest.TestCase) :
         self.assertEqual(output.function_calls[0].name, "evaluate")
         self.assertEqual(output.function_calls[0].input, "1 + 1")
         self.assertEqual(output.function_calls[0].output, "2")
+        
+    def test_agent_can_be_init_with_optional_component_list_static_components_are_passed_to_the_prompt_template_and_dynamic_ones_stores_in_property (self) :
+        llm = synthetic.llms.FakeLLM(responses=[])
+        prompt_template = synthetic.PromptTemplate(template="<Component/>", input_variables=[])
+        
+        class DynamicComponent(synthetic.Component) :
+            is_dynamic = True
+            
+        agent = synthetic.Agent(llm=llm, prompt_template=prompt_template, components=[synthetic.Component, DynamicComponent])
+        
+        self.assertIsInstance(agent, synthetic.Agent)
+        self.assertListEqual(agent.components, [ DynamicComponent ])
+        self.assertLessEqual(agent.prompt_template.components, [ synthetic.Component ])
