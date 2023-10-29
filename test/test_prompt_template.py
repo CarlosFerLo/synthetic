@@ -96,3 +96,11 @@ class PromtTemplateTest (unittest.TestCase):
             
         prompt_template = synthetic.PromptTemplate(template="<MyComponent/>", input_variables=[], components=[MyComponent])
         self.assertRaises(synthetic.PromptTemplateError, prompt_template.format)
+        
+    def test_prompt_template_checks_all_components_are_static_and_raises_error_if_try_to_add_a_dynamic_component_to_it (self):
+        class MyComponent (synthetic.Component) :
+            name = "MyComponent"
+            is_dynamic = True
+            
+        with self.assertRaises(synthetic.DynamicComponentInPromptTemplateError):
+            prompt_template = synthetic.PromptTemplate(template="<MyComponent/>", input_variables=[], components=[MyComponent])

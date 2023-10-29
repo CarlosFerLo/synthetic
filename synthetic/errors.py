@@ -13,6 +13,10 @@ class ComponentConflictError (PromptTemplateError) :
     """ This error raises if try to add two components with the same name to a template
     """
     
+class DynamicComponentInPromptTemplateError (ProcessLookupError) :
+    """ This error raises if try to add a dynamic component to a PromptTemplate
+    """
+    
 class InvalidSignatureError (Error) :
     """ This error raises if the validations checks for a signature fail
     """

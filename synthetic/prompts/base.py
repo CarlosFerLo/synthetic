@@ -69,3 +69,7 @@ class PromptTemplate () :
         component_names = [component.name for component in components]
         if len(component_names) != len(set(component_names)):
             raise synthetic.ComponentConflictError("Two components cannot have the same name.")
+        
+        dynamic_components = [ c for c in components if c.is_dynamic ]
+        if len(dynamic_components) > 0 :    
+            raise synthetic.DynamicComponentInPromptTemplateError(f"Dynamic components are not allowed in PromptTemplate. Dynamic components: {dynamic_components}.")
