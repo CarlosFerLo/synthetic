@@ -13,7 +13,7 @@ class ComponentConflictError (PromptTemplateError) :
     """ This error raises if try to add two components with the same name to a template
     """
     
-class DynamicComponentInPromptTemplateError (ProcessLookupError) :
+class DynamicComponentInPromptTemplateError (PromptTemplateError) :
     """ This error raises if try to add a dynamic component to a PromptTemplate
     """
     
@@ -27,4 +27,12 @@ class GenerationError (Error) :
     
 class InvalidFunctionNameError (GenerationError) :
     """ This error raises if the LLM tries to call a function that is not in the functions list of the Agent.
+    """
+    
+class ComponentError (Error) :
+    """ This is the base class for errors raised by the components module.
+    """
+    
+class LoadComponentsError (ComponentError) :
+    """ This is the base class for errors raised by the load_components function.
     """

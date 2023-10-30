@@ -2,7 +2,7 @@ from typing import List, Any, Type
 
 import synthetic
 import synthetic.re as re
-from synthetic.components import Component
+from synthetic.components import Component, load_components
 
 class PromptTemplate () :
     """Base class for prompt templates
@@ -26,7 +26,11 @@ class PromptTemplate () :
         
         self.template = template
         self.input_variables = input_variables
-        self.components = components
+        
+        standard_components = load_components(template)
+        standard_components = [ s for s in standard_components if all([ s.name != c.name for c in components ]) ]
+        
+        self.components = components + standard_components
         
     def add_components(self, components: List[Type[Component]]) -> None :
         self._validate_components(components=self.components+components)

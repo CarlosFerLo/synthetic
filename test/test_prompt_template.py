@@ -103,4 +103,26 @@ class PromtTemplateTest (unittest.TestCase):
             is_dynamic = True
             
         with self.assertRaises(synthetic.DynamicComponentInPromptTemplateError):
-            prompt_template = synthetic.PromptTemplate(template="<MyComponent/>", input_variables=[], components=[MyComponent])
+            synthetic.PromptTemplate(template="<MyComponent/>", input_variables=[], components=[MyComponent])
+                  
+    def test_prompt_template_imports_standard_components_used_in_the_template_if_use_the_default_tag_signature (self) :
+        prompt_template = synthetic.PromptTemplate(
+            template="<FunctionDescriptions/>",
+            input_variables=[]
+        )
+        
+        self.assertListEqual(prompt_template.components, [synthetic.components.FunctionDescriptions])
+        
+    def test_prompt_template_does_not_import_standard_components_if_a_component_with_the_same_name_is_already_being_used (self) :
+        class MyComponent (synthetic.Component) :
+            name = "FunctionDescriptions"
+            def format(self, **kwargs: Any) -> str:
+                return "Hello World!"
+            
+        prompt_template = synthetic.PromptTemplate(
+            template="<FunctionDescriptions/>",
+            input_variables=[],
+            components=[MyComponent]
+        )
+        
+        self.assertListEqual(prompt_template.components, [MyComponent])

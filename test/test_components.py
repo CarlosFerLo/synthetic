@@ -57,3 +57,18 @@ class ComponentsTest (unittest.TestCase) :
             is_dynamic = True
             
         self.assertTrue(NewDynamicComponent.is_dynamic)
+        
+    def test_default_function_descriptions_component_works_as_expected (self) :
+        @synthetic.function(name="evaluate", description="evaluate an arithmetical expression.")
+        def evaluate (string: str) -> str :
+            return str(eval(string))
+        
+        @synthetic.function(name="hello", description="say hello to someone")
+        def hello (string: str) -> str :
+            return "Hello " + string
+        
+        inst = synthetic.components.FunctionDescriptions()
+        self.assertIsInstance(inst, synthetic.components.FunctionDescriptions)
+        
+        output = inst.format(functions = [evaluate, hello])
+        self.assertEqual(output, f"-{evaluate.name}: {evaluate.description}\n-{hello.name}: {hello.description}")
