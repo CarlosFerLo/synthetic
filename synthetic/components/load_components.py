@@ -2,13 +2,15 @@ from typing import List, Type, Optional
 
 from .base import Component
 from .function_description import FunctionDescriptions
+from .funation_call_description import FunctionCallDescription
 
 import synthetic
 import synthetic.re as re
 from synthetic.errors import LoadComponentsError
 
 _BASE_COMPONENTS = {
-    "FunctionDescriptions": FunctionDescriptions
+    "FunctionDescriptions": FunctionDescriptions,
+    "FunctionCallDescription": FunctionCallDescription
 }
  
 def load_components (string: Optional[str] = None, names: Optional[List[str]] = None) -> List[Type[Component]] :

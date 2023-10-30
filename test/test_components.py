@@ -72,3 +72,12 @@ class ComponentsTest (unittest.TestCase) :
         
         output = inst.format(functions = [evaluate, hello])
         self.assertEqual(output, f"-{evaluate.name}: {evaluate.description}\n-{hello.name}: {hello.description}")
+        
+    def test_default_function_call_description_component_works_as_expected (self) :
+        inst = synthetic.components.FunctionCallDescription()
+        self.assertIsInstance(inst, synthetic.components.FunctionCallDescription)
+        
+        output = inst.format(signature = "[{name}({input})->{output}]")
+        self.assertEqual(output, "[{name}({input})->{output}]")
+        
+        self.assertListEqual(synthetic.load_components(names=["FunctionCallDescription"]), [synthetic.components.FunctionCallDescription])

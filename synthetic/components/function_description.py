@@ -10,6 +10,6 @@ class FunctionDescriptions (Component) :
     name = "FunctionDescriptions"
     
     def format(self, **kwargs: Any) -> str:
-        functions: List[Function] = kwargs.get("functions")
+        functions: List[Function] = kwargs["functions"]
         
         return "\n".join([ f"-{f.name}: {f.description}" for f in functions ])
