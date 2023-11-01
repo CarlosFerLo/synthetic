@@ -36,7 +36,7 @@ class Agent () :
         
         self._validate_signature(signature)
         self.signature = signature
-        self.signature_pattern = re.compile(signature, key_pattern_dict={ "name": r"(\S*)" })
+        self.signature_pattern = re.compile(signature, key_pattern_dict={ "name": "(\\S*)" })
         
         self.partial_signature, self.function_output_suffix = signature.split("{output}")
         self.partial_signature_pattern = re.compile(self.partial_signature + "$", key_pattern_dict={ "name": r"(\S*)"}, flags = re.M)
