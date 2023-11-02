@@ -77,7 +77,7 @@ class AgentsTest (unittest.TestCase) :
         self.assertIsInstance(agent.signature_pattern, re.Pattern)
         self.assertEqual(agent.signature_pattern, pattern)
          
-    def test_agent_partial_sognature_pattern_gets_generated_and_compiled (self) :
+    def test_agent_partial_signature_pattern_gets_generated_and_compiled (self) :
         llm = synthetic.llms.FakeLLM(responses=[""])
         prompt_template =  synthetic.PromptTemplate(template="{query}", input_variables=["query"])
         signature = "Action: {name}\n" \
