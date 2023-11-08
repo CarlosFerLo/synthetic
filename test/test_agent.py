@@ -105,6 +105,21 @@ class AgentsTest (unittest.TestCase) :
         self.assertIsInstance(output, synthetic.AgentOutput)
         self.assertEqual(output.generation, "[evaluate(1 + 1)->2]something")
         self.assertEqual(output.raw, "add 1 + 1[evaluate(1 + 1)->2]something")
+        
+    def test_agent_calls_function_with_multiline_function_signature (self):
+        llm = synthetic.llms.FakeLLM(responses=["Action: evaluate\nAction Input: 1 + 1\nObservation: chicken", "something"])
+        prompt_template = synthetic.PromptTemplate(template="{query}", input_variables=["query"])
+        
+        @synthetic.function(name="evaluate", description="")
+        def evaluate (a) :
+            return str(eval(a))
+        
+        agent = synthetic.Agent(llm, prompt_template, functions=[evaluate], signature="Action: {name}\nAction Input: {input}\nObservation: {output}\n")
+        
+        output = agent.call(query="add 1 + 1 ")
+        self.assertIsInstance(output, synthetic.AgentOutput)
+        self.assertEqual(output.generation, "Action: evaluate\nAction Input: 1 + 1\nObservation: 2\nsomething")
+        self.assertEqual(output.raw, "add 1 + 1 Action: evaluate\nAction Input: 1 + 1\nObservation: 2\nsomething")
     
     def test_agent_output_contains_function_calls_and_it_contains_a_function_call_data_structure (self) :
         llm = synthetic.llms.FakeLLM(responses=["[evaluate(1 + 1)->more things", "something"])
@@ -121,6 +136,27 @@ class AgentsTest (unittest.TestCase) :
         self.assertEqual(output.function_calls[0].name, "evaluate")
         self.assertEqual(output.function_calls[0].input, "1 + 1")
         self.assertEqual(output.function_calls[0].output, "2")
+        
+    def test_agent_output_contains_function_calls_and_it_contains_a_function_call_data_structure_for_multiline_signatures (self) :
+        llm = synthetic.llms.FakeLLM(responses=["Action: evaluate\nAction Input: 1 + 1\n Observation: chicken", "something"])
+        prompt_template = synthetic.PromptTemplate(template="{query}", input_variables=["query"])
+        
+        @synthetic.function(name="evaluate", description="")
+        def evaluate (a):
+            return str(eval(a))
+        
+        agent = synthetic.Agent(llm, prompt_template, functions=[evaluate], signature="Action: {name}\nAction Input: {input}\nObservation: {output}\n")
+        
+        output = agent.call(query="add 1 + 1")
+        print(output)
+        print(agent.partial_signature_pattern.pattern)
+        print(agent.signature_pattern.pattern)
+        print(re.findall(agent.signature_pattern, output.raw))
+        self.assertIsInstance(output.function_calls[0], synthetic.FunctionCall)
+        self.assertEqual(output.function_calls[0].name, "evaluate")
+        self.assertEqual(output.function_calls[0].input, "1 + 1")
+        self.assertEqual(output.function_calls[0].output, "2")
+        
         
     def test_agent_can_be_init_with_optional_component_list_static_components_are_passed_to_the_prompt_template_and_dynamic_ones_stores_in_property (self) :
         llm = synthetic.llms.FakeLLM(responses=[])

@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "synthetic-cognition"
+version = "{{VERSION_PLACEHOLDER}}"
+description = "LLM Agent Library"
+authors = ["Carlos Fernandez <carlos.ferlo@outlook.com>"]
+license = "LICENSE"
+readme = "README.md"
+packages = [
+    { include = "synthetic" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+langchain = "^0.0.331"
+pytest = "^7.4.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
